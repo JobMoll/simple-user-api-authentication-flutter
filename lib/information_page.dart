@@ -28,6 +28,11 @@ class _InformationPageState extends State<InformationPage> {
             IconButton(
                 icon: Icon(Icons.exit_to_app),
                 onPressed: () {
+                  SimpleUserAPIAuthentication.showSimpleMessage(
+                      'Loggin you out...',
+                      'One moment while we log you out',
+                      'info',
+                      100);
                   SimpleUserAPIAuthentication.userLogout();
                 })
           ],
@@ -41,7 +46,8 @@ class _InformationPageState extends State<InformationPage> {
                   SimpleUserAPIAuthentication.showSimpleMessage(
                       'Fetching user data...',
                       'Fetching the user data one moment please :)',
-                      'info');
+                      'info',
+                      3);
                   SimpleUserAPIAuthentication.getUserData();
                 },
                 child: Text('refresh data'),

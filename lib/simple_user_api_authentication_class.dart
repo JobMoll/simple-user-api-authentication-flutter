@@ -41,7 +41,8 @@ class SimpleUserAPIAuthentication {
 
         SimpleUserAPIAuthentication.requestAccessToken(getUserData);
       } else {
-        showSimpleMessage('Login problem...', responseData['message'], 'error');
+        showSimpleMessage(
+            'Login problem...', responseData['message'], 'error', 3);
       }
     });
   }
@@ -114,8 +115,6 @@ class SimpleUserAPIAuthentication {
         .then((response) async {
       var responseData = response.data;
 
-      print(response.statusCode);
-
       if (response.statusCode == 200) {
         if (responseData['access_token_is_valid'] == true) {
           Map<String, dynamic> userDataJsonString = responseData['user_data'];
@@ -147,6 +146,9 @@ class SimpleUserAPIAuthentication {
           await storage.delete(
               key: 'simple_user_api_authentication_access_token');
           Get.offNamed("/loginPage");
+
+          SimpleUserAPIAuthentication.showSimpleMessage('Loggin out succesful!',
+              'You are succesfully loggedout :)', 'success', 3);
         } else {
           requestAccessToken(userLogout);
         }
@@ -156,7 +158,8 @@ class SimpleUserAPIAuthentication {
     });
   }
 
-  static showSimpleMessage(String title, String message, String messageSort) {
+  static showSimpleMessage(
+      String title, String message, String messageSort, int durationInSec) {
     IconData icon = Icons.info_outline;
     Color color = Colors.blue;
     if (messageSort == 'info') {
@@ -170,23 +173,28 @@ class SimpleUserAPIAuthentication {
       color = Colors.green;
     }
 
+    if (Get.isSnackbarOpen) {
+      Get.close(1);
+    }
+
     Get.snackbar(
-      title, // title
+      title,
       message,
-      colorText: Colors.white, // message
+      colorText: Colors.white,
       icon: Icon(
         icon,
         color: color,
+        size: 30,
       ),
       margin: EdgeInsets.all(0),
       padding: EdgeInsets.all(10),
       borderRadius: 0,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.black87,
-      shouldIconPulse: false,
+      shouldIconPulse: true,
       barBlur: 100,
       isDismissible: true,
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: durationInSec),
     );
   }
 }
