@@ -29,30 +29,44 @@ class _InformationPageState extends State<InformationPage> {
                 icon: Icon(Icons.exit_to_app),
                 onPressed: () {
                   SimpleUserAPIAuthentication.showSimpleMessage(
-                      'Loggin you out...',
-                      'One moment while we log you out',
+                      'Loggin you out',
+                      'One moment while we log you out...',
                       'info',
                       100);
                   SimpleUserAPIAuthentication.userLogout();
                 })
           ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  SimpleUserAPIAuthentication.showSimpleMessage(
-                      'Fetching user data...',
-                      'Fetching the user data one moment please :)',
-                      'info',
-                      3);
-                  SimpleUserAPIAuthentication.getUserData();
-                },
-                child: Text('refresh data'),
-              )
-            ],
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.only(top: 0, left: 12, right: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    SimpleUserAPIAuthentication.showSimpleMessage(
+                        'Fetching user data...',
+                        'Fetching the user data one moment please :)',
+                        'info',
+                        100);
+                    SimpleUserAPIAuthentication.getUserData();
+                  },
+                  child: Container(
+                      margin: EdgeInsets.only(top: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        'Refresh data',
+                        style: TextStyle(fontSize: 17, color: Colors.white),
+                      )),
+                )
+              ],
+            ),
           ),
         ),
       ),

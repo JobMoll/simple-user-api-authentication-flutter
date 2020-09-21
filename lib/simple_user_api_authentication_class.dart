@@ -39,7 +39,10 @@ class SimpleUserAPIAuthentication {
             key: 'simple_user_api_authentication_refresh_token',
             value: responseData['refresh_token']);
 
-        SimpleUserAPIAuthentication.requestAccessToken(getUserData);
+        SimpleUserAPIAuthentication.showSimpleMessage('Your login is correct!',
+            'You are successfully loggedin', 'success', 3);
+
+        Get.offNamed("/informationPage");
       } else {
         showSimpleMessage(
             'Login problem...', responseData['message'], 'error', 3);
@@ -117,6 +120,9 @@ class SimpleUserAPIAuthentication {
 
       if (response.statusCode == 200) {
         if (responseData['access_token_is_valid'] == true) {
+          SimpleUserAPIAuthentication.showSimpleMessage('User data fetched!',
+              'Here is the newest user data :)', 'success', 3);
+
           Map<String, dynamic> userDataJsonString = responseData['user_data'];
           print(userDataJsonString);
         } else {
@@ -134,11 +140,12 @@ class SimpleUserAPIAuthentication {
     );
 
     Map<String, String> accessTokenData = {'access_token': accessToken};
+
     dio
         .post('/wp-json/simple-api-authentication/delete-user-tokens',
             data: accessTokenData)
         .then((response) async {
-      var responseData = jsonDecode(response.data);
+      var responseData = response.data;
       if (response.statusCode == 200) {
         if (responseData['access_token_is_valid'] == true) {
           await storage.delete(
