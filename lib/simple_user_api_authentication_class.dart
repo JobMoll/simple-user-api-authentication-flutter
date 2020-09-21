@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 String baseDomainURL = 'https://usercookieauthenticationapi.mollupbuilding.nl/';
-String accessTokenOnPage = '';
+
+final storage = new FlutterSecureStorage();
 
 Map<String, String> httpHeaders = {
   'Content-Type': 'application/json',
@@ -44,9 +45,9 @@ class SimpleUserAPIAuthentication {
         // print(refreshDecodedResponse['status']);
         // print(refreshDecodedResponse['refresh_token']);
 
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('simple_user_api_authentication_refresh_token',
-            refreshDecodedResponse['refresh_token']);
+        await storage.write(
+            key: 'simple_user_api_authentication_refresh_token',
+            value: refreshDecodedResponse['refresh_token']);
 
         SimpleUserAPIAuthentication.requestAccessTokenAndRunFunction(
             'goToInformationPage');
@@ -93,7 +94,10 @@ class SimpleUserAPIAuthentication {
     );
   }
 
-  static getUserData(accessToken, bool refreshing) {
+  static getUserData() async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
     HttpRequestAPIData.httpGETRequestAPIData(
       apiEndpointURL:
           'wp-json/simple-api-authentication/get-user-data?access_token=' +
@@ -108,10 +112,6 @@ class SimpleUserAPIAuthentication {
           Map<String, dynamic> userDataJsonString =
               userDataDecodedResponse['user_data'];
           print(userDataJsonString);
-          if (refreshing == true) {
-            SimpleUserAPIAuthentication.showSimpleMessage('User data loaded!',
-                'Here you have the newest user data :)', 'success');
-          }
         } else {
           requestAccessTokenAndRunFunction('getUserData');
         }
@@ -125,7 +125,11 @@ class SimpleUserAPIAuthentication {
     });
   }
 
-  static userLogout(accessToken) {
+  static userLogout() async {
+    String accessToken = await storage.read(
+      key: 'simple_user_api_authentication_access_token',
+    );
+
     Map refreshTokenData = {'access_token': accessToken};
     HttpRequestAPIData.httpPOSTRequestAPIData(
             apiEndpointURL:
@@ -139,8 +143,8 @@ class SimpleUserAPIAuthentication {
         print(userLogoutDecodedResponse);
 
         if (userLogoutDecodedResponse['access_token_is_valid'] == true) {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.remove('simple_user_api_authentication_refresh_token');
+          await storage.delete(
+              key: 'simple_user_api_authentication_refresh_token');
 
           Get.toNamed("/loginPage");
         } else {
@@ -156,9 +160,8 @@ class SimpleUserAPIAuthentication {
   }
 
   static requestAccessTokenAndRunFunction(functionName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     String refreshToken =
-        prefs.getString('simple_user_api_authentication_refresh_token');
+        await storage.read(key: 'simple_user_api_authentication_refresh_token');
 
     Map refreshTokenData = {'refresh_token': refreshToken};
     HttpRequestAPIData.httpPOSTRequestAPIData(
@@ -171,24 +174,19 @@ class SimpleUserAPIAuthentication {
         // print(accessDecodedResponse['status']);
         // print(accessDecodedResponse['access_token']);
 
-        print('Token: ' + accessTokenOnPage);
-
         if (accessDecodedResponse['access_token'] != 'failed') {
-          accessTokenOnPage = accessDecodedResponse['access_token'];
+          String accessTokenOnPage = accessDecodedResponse['access_token'];
 
           if (functionName == 'getUserData') {
-            getUserData(accessTokenOnPage, false);
+            getUserData();
           } else if (functionName == 'userLogout') {
-            userLogout(accessTokenOnPage);
+            userLogout();
           } else if (functionName == 'goToInformationPage') {
             Get.toNamed("/informationPage", arguments: accessTokenOnPage);
           } else {
             return;
           }
         } else {
-          // print(decodedResponse['status']);
-          // print(decodedResponse['message']);
-
           return accessDecodedResponse['message'];
         }
       } else {
@@ -198,9 +196,8 @@ class SimpleUserAPIAuthentication {
   }
 
   static checkForValidRefreshToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     String refreshToken =
-        prefs.getString('simple_user_api_authentication_refresh_token');
+        await storage.read(key: 'simple_user_api_authentication_refresh_token');
 
     print(refreshToken);
 
@@ -210,13 +207,17 @@ class SimpleUserAPIAuthentication {
               apiEndpointURL:
                   'wp-json/simple-api-authentication/generate-access-token',
               jsonData: jsonEncode(refreshTokenData))
-          .then((response) {
+          .then((response) async {
         var accessDecodedResponse = jsonDecode(response.body);
         if (response.statusCode == 200) {
           // print(accessDecodedResponse['status']);
           // print(accessDecodedResponse['access_token']);
-          Get.toNamed("/informationPage",
-              arguments: accessDecodedResponse['access_token']);
+
+          await storage.write(
+              key: 'simple_user_api_authentication_access_token',
+              value: accessDecodedResponse['access_token']);
+
+          Get.toNamed("/informationPage");
         } else {
           // print(decodedResponse['status']);
           // print(decodedResponse['message']);
