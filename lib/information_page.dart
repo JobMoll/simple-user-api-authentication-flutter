@@ -8,12 +8,9 @@ class InformationPage extends StatefulWidget {
 }
 
 class _InformationPageState extends State<InformationPage> {
-// cheat sheet for shared preferences
-
   @override
   void initState() {
     super.initState();
-
     SimpleUserAPIAuthentication.getUserData();
   }
 

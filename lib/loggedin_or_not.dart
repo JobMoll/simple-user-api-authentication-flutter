@@ -8,9 +8,6 @@ class LoggedinOrNotPage extends StatefulWidget {
 }
 
 class _LoggedinOrNotPageState extends State<LoggedinOrNotPage> {
-// cheat sheet for shared preferences
-// https://medium.com/flutterdevs/using-sharedpreferences-in-flutter-251755f07127
-
   @override
   void initState() {
     super.initState();
@@ -21,7 +18,7 @@ class _LoggedinOrNotPageState extends State<LoggedinOrNotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test'),
+        title: Text('Checking'),
       ),
       body: Center(
         child: Column(

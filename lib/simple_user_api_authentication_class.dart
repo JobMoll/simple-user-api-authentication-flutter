@@ -1,61 +1,166 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'
+    as secureStorage;
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
-String baseDomainURL = 'https://usercookieauthenticationapi.mollupbuilding.nl/';
+final dio = Dio(
+  BaseOptions(
+    baseUrl: 'https://usercookieauthenticationapi.mollupbuilding.nl',
+    followRedirects: false,
+    validateStatus: (status) {
+      return status < 500;
+    },
+  ),
+);
 
-final storage = new FlutterSecureStorage();
-
-Map<String, String> httpHeaders = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-};
-
-// post request
-class HttpRequestAPIData {
-  static Future httpPOSTRequestAPIData({
-    @required String apiEndpointURL,
-    @required String jsonData,
-  }) async {
-    return http.post(baseDomainURL + apiEndpointURL,
-        headers: httpHeaders, body: jsonData);
-  }
-
-  static Future httpGETRequestAPIData({
-    @required String apiEndpointURL,
-  }) async {
-    return http.get(baseDomainURL + apiEndpointURL, headers: httpHeaders);
-  }
-}
+final storage = new secureStorage.FlutterSecureStorage();
 
 class SimpleUserAPIAuthentication {
+// 1. get the refresh token with the login details
+// 2. get the access token with the refresh token
+// 3. get user data with the access token
+
   static requestRefreshToken(String username, String password) {
-    Map loginData = {'username': username, 'password': password};
+    Map<String, String> loginData = {
+      'username': username,
+      'password': password
+    };
 
-    HttpRequestAPIData.httpPOSTRequestAPIData(
-            apiEndpointURL:
-                'wp-json/simple-api-authentication/generate-refresh-token',
-            jsonData: jsonEncode(loginData))
+    dio
+        .post('/wp-json/simple-api-authentication/generate-refresh-token',
+            data: loginData)
         .then((response) async {
-      var refreshDecodedResponse = jsonDecode(response.body);
+      var responseData = response.data;
       if (response.statusCode == 200) {
-        // print(refreshDecodedResponse['status']);
-        // print(refreshDecodedResponse['refresh_token']);
-
         await storage.write(
             key: 'simple_user_api_authentication_refresh_token',
-            value: refreshDecodedResponse['refresh_token']);
+            value: responseData['refresh_token']);
 
-        SimpleUserAPIAuthentication.requestAccessTokenAndRunFunction(
-            'goToInformationPage');
+        SimpleUserAPIAuthentication.requestAccessToken(getUserData());
+      } else {
+        showSimpleMessage('Login problem...', responseData['message'], 'error');
+      }
+    });
+  }
+
+  static requestAccessToken(dynamic name) async {
+    print('run function');
+    String refreshToken =
+        await storage.read(key: 'simple_user_api_authentication_refresh_token');
+    print('run function 2');
+    Map<String, String> refreshTokenData = {'refresh_token': refreshToken};
+
+    dio
+        .post('/wp-json/simple-api-authentication/generate-access-token',
+            data: refreshTokenData)
+        .then((response) async {
+      var responseData = response.data;
+      if (response.statusCode == 200) {
+        if (responseData['access_token'] != 'failed') {
+          await storage.write(
+              key: 'simple_user_api_authentication_access_token',
+              value: responseData['access_token']);
+
+          name();
+        } else {
+          return responseData['message'];
+        }
+      } else {
+        Get.offNamed("/loginPage");
+      }
+    });
+  }
+
+  static checkForValidRefreshToken() async {
+    String refreshToken =
+        await storage.read(key: 'simple_user_api_authentication_refresh_token');
+
+    if (refreshToken != '' && refreshToken != null) {
+      Map<String, String> refreshTokenData = {'refresh_token': refreshToken};
+
+      dio
+          .post(
+        '/wp-json/simple-api-authentication/generate-access-token',
+        data: json.encode(refreshTokenData),
+      )
+          .then((response) {
+        var responseData = response.data;
+        if (response.statusCode == 200) {
+          storage.write(
+              key: 'simple_user_api_authentication_access_token',
+              value: responseData['access_token']);
+
+          Get.offNamed("/informationPage");
+        } else {
+          Get.offNamed("/loginPage");
+        }
+      });
+    } else {
+      Get.offNamed("/loginPage");
+    }
+  }
+
+  static getUserData() async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> accessTokenData = {'access_token': accessToken};
+
+    dio
+        .post('/wp-json/simple-api-authentication/get-user-data',
+            data: accessTokenData)
+        .then((response) async {
+      var responseData = response.data;
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        if (responseData['access_token_is_valid'] == true) {
+          Map<String, dynamic> userDataJsonString = responseData['user_data'];
+          print(userDataJsonString);
+        } else {
+          return requestAccessToken(getUserData());
+        }
+      } else if (response.statusCode == 401) {
+        print('object');
+        return requestAccessToken(getUserData());
+      }
+    });
+  }
+
+  static userLogout() async {
+    String accessToken = await storage.read(
+      key: 'simple_user_api_authentication_access_token',
+    );
+
+    Map<String, String> accessTokenData = {'access_token': accessToken};
+    dio
+        .post('/wp-json/simple-api-authentication/delete-user-tokens',
+            data: accessTokenData)
+        .then((response) async {
+      var responseData = jsonDecode(response.data);
+      if (response.statusCode == 200) {
+        // print(userLogoutDecodedResponse['status']);
+        // print(userLogoutDecodedResponse['access_token']);
+        print(responseData);
+
+        if (responseData['access_token_is_valid'] == true) {
+          await storage.delete(
+              key: 'simple_user_api_authentication_refresh_token');
+          await storage.delete(
+              key: 'simple_user_api_authentication_access_token');
+          Get.offNamed("/loginPage");
+        } else {
+          requestAccessToken(userLogout());
+        }
       } else {
         // print(decodedResponse['status']);
         // print(decodedResponse['message']);
-        showSimpleMessage(
-            'Login problem...', refreshDecodedResponse['message'], 'error');
+        requestAccessToken(userLogout());
+        print(responseData['message']);
       }
     });
   }
@@ -92,142 +197,5 @@ class SimpleUserAPIAuthentication {
       isDismissible: true,
       duration: Duration(seconds: 3),
     );
-  }
-
-  static getUserData() async {
-    String accessToken =
-        await storage.read(key: 'simple_user_api_authentication_access_token');
-
-    HttpRequestAPIData.httpGETRequestAPIData(
-      apiEndpointURL:
-          'wp-json/simple-api-authentication/get-user-data?access_token=' +
-              accessToken,
-    ).then((response) async {
-      var userDataDecodedResponse = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        // print(refreshDecodedResponse['status']);
-        // print(refreshDecodedResponse['refresh_token']);
-
-        if (userDataDecodedResponse['access_token_is_valid'] == true) {
-          Map<String, dynamic> userDataJsonString =
-              userDataDecodedResponse['user_data'];
-          print(userDataJsonString);
-        } else {
-          requestAccessTokenAndRunFunction('getUserData');
-        }
-      } else {
-        // print(decodedResponse['status']);
-        // print(decodedResponse['message']);
-
-        print(response.body);
-        requestAccessTokenAndRunFunction('getUserData');
-      }
-    });
-  }
-
-  static userLogout() async {
-    String accessToken = await storage.read(
-      key: 'simple_user_api_authentication_access_token',
-    );
-
-    Map refreshTokenData = {'access_token': accessToken};
-    HttpRequestAPIData.httpPOSTRequestAPIData(
-            apiEndpointURL:
-                'wp-json/simple-api-authentication/delete-user-tokens',
-            jsonData: jsonEncode(refreshTokenData))
-        .then((response) async {
-      var userLogoutDecodedResponse = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        // print(userLogoutDecodedResponse['status']);
-        // print(userLogoutDecodedResponse['access_token']);
-        print(userLogoutDecodedResponse);
-
-        if (userLogoutDecodedResponse['access_token_is_valid'] == true) {
-          await storage.delete(
-              key: 'simple_user_api_authentication_refresh_token');
-
-          Get.toNamed("/loginPage");
-        } else {
-          requestAccessTokenAndRunFunction('userLogout');
-        }
-      } else {
-        // print(decodedResponse['status']);
-        // print(decodedResponse['message']);
-        requestAccessTokenAndRunFunction('userLogout');
-        print(userLogoutDecodedResponse['message']);
-      }
-    });
-  }
-
-  static requestAccessTokenAndRunFunction(functionName) async {
-    String refreshToken =
-        await storage.read(key: 'simple_user_api_authentication_refresh_token');
-
-    Map refreshTokenData = {'refresh_token': refreshToken};
-    HttpRequestAPIData.httpPOSTRequestAPIData(
-            apiEndpointURL:
-                'wp-json/simple-api-authentication/generate-access-token',
-            jsonData: jsonEncode(refreshTokenData))
-        .then((response) {
-      var accessDecodedResponse = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        // print(accessDecodedResponse['status']);
-        // print(accessDecodedResponse['access_token']);
-
-        if (accessDecodedResponse['access_token'] != 'failed') {
-          String accessTokenOnPage = accessDecodedResponse['access_token'];
-
-          if (functionName == 'getUserData') {
-            getUserData();
-          } else if (functionName == 'userLogout') {
-            userLogout();
-          } else if (functionName == 'goToInformationPage') {
-            Get.toNamed("/informationPage", arguments: accessTokenOnPage);
-          } else {
-            return;
-          }
-        } else {
-          return accessDecodedResponse['message'];
-        }
-      } else {
-        Get.toNamed("/loginPage");
-      }
-    });
-  }
-
-  static checkForValidRefreshToken() async {
-    String refreshToken =
-        await storage.read(key: 'simple_user_api_authentication_refresh_token');
-
-    print(refreshToken);
-
-    if (refreshToken != '' && refreshToken != null) {
-      Map refreshTokenData = {'refresh_token': refreshToken};
-      HttpRequestAPIData.httpPOSTRequestAPIData(
-              apiEndpointURL:
-                  'wp-json/simple-api-authentication/generate-access-token',
-              jsonData: jsonEncode(refreshTokenData))
-          .then((response) async {
-        var accessDecodedResponse = jsonDecode(response.body);
-        if (response.statusCode == 200) {
-          // print(accessDecodedResponse['status']);
-          // print(accessDecodedResponse['access_token']);
-
-          await storage.write(
-              key: 'simple_user_api_authentication_access_token',
-              value: accessDecodedResponse['access_token']);
-
-          Get.toNamed("/informationPage");
-        } else {
-          // print(decodedResponse['status']);
-          // print(decodedResponse['message']);
-
-          print(accessDecodedResponse['message']);
-          Get.toNamed("/loginPage");
-        }
-      });
-    } else {
-      Get.toNamed("/loginPage");
-    }
   }
 }
