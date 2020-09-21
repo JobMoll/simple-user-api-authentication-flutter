@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dioCalls;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
 import 'package:get/get.dart';
 
-final dio = Dio(
-  BaseOptions(
+final dio = dioCalls.Dio(
+  dioCalls.BaseOptions(
     baseUrl: 'https://usercookieauthenticationapi.mollupbuilding.nl',
     followRedirects: false,
     validateStatus: (status) {
@@ -39,18 +39,17 @@ class SimpleUserAPIAuthentication {
             key: 'simple_user_api_authentication_refresh_token',
             value: responseData['refresh_token']);
 
-        SimpleUserAPIAuthentication.requestAccessToken(getUserData());
+        SimpleUserAPIAuthentication.requestAccessToken(getUserData);
       } else {
         showSimpleMessage('Login problem...', responseData['message'], 'error');
       }
     });
   }
 
-  static requestAccessToken(dynamic name) async {
-    print('run function');
+  static requestAccessToken(VoidCallback name) async {
     String refreshToken =
         await storage.read(key: 'simple_user_api_authentication_refresh_token');
-    print('run function 2');
+
     Map<String, String> refreshTokenData = {'refresh_token': refreshToken};
 
     dio
@@ -122,11 +121,10 @@ class SimpleUserAPIAuthentication {
           Map<String, dynamic> userDataJsonString = responseData['user_data'];
           print(userDataJsonString);
         } else {
-          return requestAccessToken(getUserData());
+          return requestAccessToken(getUserData);
         }
       } else if (response.statusCode == 401) {
-        print('object');
-        return requestAccessToken(getUserData());
+        return requestAccessToken(getUserData);
       }
     });
   }
@@ -143,10 +141,6 @@ class SimpleUserAPIAuthentication {
         .then((response) async {
       var responseData = jsonDecode(response.data);
       if (response.statusCode == 200) {
-        // print(userLogoutDecodedResponse['status']);
-        // print(userLogoutDecodedResponse['access_token']);
-        print(responseData);
-
         if (responseData['access_token_is_valid'] == true) {
           await storage.delete(
               key: 'simple_user_api_authentication_refresh_token');
@@ -154,13 +148,10 @@ class SimpleUserAPIAuthentication {
               key: 'simple_user_api_authentication_access_token');
           Get.offNamed("/loginPage");
         } else {
-          requestAccessToken(userLogout());
+          requestAccessToken(userLogout);
         }
       } else {
-        // print(decodedResponse['status']);
-        // print(decodedResponse['message']);
-        requestAccessToken(userLogout());
-        print(responseData['message']);
+        requestAccessToken(userLogout);
       }
     });
   }
