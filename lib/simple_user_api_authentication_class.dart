@@ -34,6 +34,7 @@ class SimpleUserAPIAuthentication {
             data: loginData)
         .then((response) async {
       var responseData = response.data;
+      print(responseData);
       if (response.statusCode == 200) {
         await storage.write(
             key: 'simple_user_api_authentication_refresh_token',
@@ -97,8 +98,6 @@ class SimpleUserAPIAuthentication {
               value: responseData['access_token']);
 
           Get.offNamed("/informationPage");
-        } else {
-          Get.offNamed("/loginPage");
         }
       });
     } else {
@@ -119,16 +118,13 @@ class SimpleUserAPIAuthentication {
       var responseData = response.data;
 
       if (response.statusCode == 200) {
-        if (responseData['access_token_is_valid'] == true) {
-          SimpleUserAPIAuthentication.showSimpleMessage('User data fetched!',
-              'Here is the newest user data :)', 'success', 3);
+        SimpleUserAPIAuthentication.showSimpleMessage('User data fetched!',
+            'Here is the newest user data :)', 'success', 3);
 
-          Map<String, dynamic> userDataJsonString = responseData['user_data'];
-          print(userDataJsonString);
-        } else {
-          return requestAccessToken(getUserData);
-        }
-      } else if (response.statusCode == 401) {
+        Map<String, dynamic> userDataJsonString = responseData['user_data'];
+        print(userDataJsonString);
+      } else {
+        print('refresh 2');
         return requestAccessToken(getUserData);
       }
     });
@@ -145,20 +141,15 @@ class SimpleUserAPIAuthentication {
         .post('/wp-json/simple-api-authentication/delete-user-tokens',
             data: accessTokenData)
         .then((response) async {
-      var responseData = response.data;
       if (response.statusCode == 200) {
-        if (responseData['access_token_is_valid'] == true) {
-          await storage.delete(
-              key: 'simple_user_api_authentication_refresh_token');
-          await storage.delete(
-              key: 'simple_user_api_authentication_access_token');
-          Get.offNamed("/loginPage");
+        await storage.delete(
+            key: 'simple_user_api_authentication_refresh_token');
+        await storage.delete(
+            key: 'simple_user_api_authentication_access_token');
+        Get.offNamed("/loginPage");
 
-          SimpleUserAPIAuthentication.showSimpleMessage('Loggin out succesful!',
-              'You are succesfully loggedout :)', 'success', 3);
-        } else {
-          requestAccessToken(userLogout);
-        }
+        SimpleUserAPIAuthentication.showSimpleMessage('Loggin out succesful!',
+            'You are succesfully loggedout :)', 'success', 3);
       } else {
         requestAccessToken(userLogout);
       }
