@@ -30,7 +30,7 @@ class SimpleUserAPIAuthentication {
     };
 
     dio
-        .post('/wp-json/simple-api-authentication/generate-refresh-token',
+        .post('/wp-json/simple-user-api-authentication/generate-refresh-token',
             data: loginData)
         .then((response) async {
       var responseData = response.data;
@@ -58,7 +58,7 @@ class SimpleUserAPIAuthentication {
     Map<String, String> refreshTokenData = {'refresh_token': refreshToken};
 
     dio
-        .post('/wp-json/simple-api-authentication/generate-access-token',
+        .post('/wp-json/simple-user-api-authentication/generate-access-token',
             data: refreshTokenData)
         .then((response) async {
       var responseData = response.data;
@@ -87,7 +87,7 @@ class SimpleUserAPIAuthentication {
 
       dio
           .post(
-        '/wp-json/simple-api-authentication/generate-access-token',
+        '/wp-json/simple-user-api-authentication/generate-access-token',
         data: json.encode(refreshTokenData),
       )
           .then((response) {
@@ -112,7 +112,7 @@ class SimpleUserAPIAuthentication {
     Map<String, String> accessTokenData = {'access_token': accessToken};
 
     dio
-        .post('/wp-json/simple-api-authentication/get-user-data',
+        .post('/wp-json/simple-user-api-authentication/get-user-data',
             data: accessTokenData)
         .then((response) async {
       var responseData = response.data;
@@ -138,7 +138,7 @@ class SimpleUserAPIAuthentication {
     Map<String, String> accessTokenData = {'access_token': accessToken};
 
     dio
-        .post('/wp-json/simple-api-authentication/delete-user-tokens',
+        .post('/wp-json/simple-user-api-authentication/delete-user-tokens',
             data: accessTokenData)
         .then((response) async {
       if (response.statusCode == 200) {
