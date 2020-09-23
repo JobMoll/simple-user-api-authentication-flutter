@@ -157,16 +157,16 @@ class SimpleUserAPIAuthentication {
   }
 
   static showSimpleMessage(
-      String title, String message, String messageSort, int durationInSec) {
+      String title, String message, String messageStatus, int durationInSec) {
     IconData icon = Icons.info_outline;
     Color color = Colors.blue;
-    if (messageSort == 'info') {
+    if (messageStatus == 'info') {
       icon = Icons.info_outline;
       color = Colors.blue;
-    } else if (messageSort == 'error') {
+    } else if (messageStatus == 'error') {
       icon = Icons.error_outline;
       color = Colors.red;
-    } else if (messageSort == 'success') {
+    } else if (messageStatus == 'success') {
       icon = Icons.check_circle_outline;
       color = Colors.green;
     }
