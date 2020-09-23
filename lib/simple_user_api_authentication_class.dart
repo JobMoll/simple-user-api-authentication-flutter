@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
 import 'package:get/get.dart';
+import 'loggedin_pages/information_page.dart';
 
 final dio = dioCalls.Dio(
   dioCalls.BaseOptions(
@@ -19,10 +20,6 @@ final dio = dioCalls.Dio(
 final storage = new secureStorage.FlutterSecureStorage();
 
 class SimpleUserAPIAuthentication {
-// 1. get the refresh token with the login details
-// 2. get the access token with the refresh token
-// 3. get user data with the access token
-
   static requestRefreshToken(String username, String password) {
     Map<String, String> loginData = {
       'username': username,
@@ -47,7 +44,8 @@ class SimpleUserAPIAuthentication {
         SimpleUserAPIAuthentication.showSimpleMessage('Your login is correct!',
             'You are successfully loggedin', 'success', 3);
 
-        Get.offNamed("/informationPage");
+        // Get.offNamed("/informationPage");
+        Get.off(InformationPage());
       } else {
         showSimpleMessage(
             'Login problem...', responseData['message'], 'error', 3);
@@ -72,7 +70,11 @@ class SimpleUserAPIAuthentication {
               key: 'simple_user_api_authentication_access_token',
               value: responseData['access_token']);
 
-          name();
+          if (name == getUserData) {
+            getUserData(true);
+          } else {
+            name();
+          }
         } else {
           return responseData['message'];
         }
@@ -111,7 +113,7 @@ class SimpleUserAPIAuthentication {
     }
   }
 
-  static getUserData() async {
+  static getUserData([bool initialLoad]) async {
     String accessToken =
         await storage.read(key: 'simple_user_api_authentication_access_token');
 
@@ -124,8 +126,10 @@ class SimpleUserAPIAuthentication {
       var responseData = response.data;
 
       if (response.statusCode == 200) {
-        SimpleUserAPIAuthentication.showSimpleMessage('User data fetched!',
-            'Here is the newest user data :)', 'success', 3);
+        if (initialLoad != true) {
+          SimpleUserAPIAuthentication.showSimpleMessage('User data fetched!',
+              'Here is the newest user data :)', 'success', 3);
+        }
 
         Map<String, dynamic> userDataJsonString = responseData['user_data'];
         print(userDataJsonString);

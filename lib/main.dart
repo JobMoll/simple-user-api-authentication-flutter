@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:simple_user_api_authentication/information_page.dart';
+import 'package:simple_user_api_authentication/loggedin_pages/information_page.dart';
 import 'package:simple_user_api_authentication/loggedin_or_not.dart';
 import 'package:simple_user_api_authentication/login_page.dart';
+import 'loggedin_pages/profile_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,8 +32,9 @@ class RouteGenerator {
         break;
 
       case '/informationPage':
-        return MaterialPageRoute(
-          builder: (_) => InformationPage(),
+        return SuaaFadeRoute(
+          page: InformationPage(),
+          duration: 0,
         );
 
         break;
@@ -40,6 +42,12 @@ class RouteGenerator {
         return SuaaFadeRoute(
           page: LoginPage(),
           duration: 200,
+        );
+
+      case '/settingsPage':
+        return SuaaFadeRoute(
+          page: SettingsPage(),
+          duration: 0,
         );
 
       default:
