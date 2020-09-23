@@ -24,7 +24,7 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return FadeRoute(
+        return SuaaFadeRoute(
           page: LoggedinOrNotPage(),
           duration: 200,
         );
@@ -37,7 +37,7 @@ class RouteGenerator {
 
         break;
       case '/loginPage':
-        return FadeRoute(
+        return SuaaFadeRoute(
           page: LoginPage(),
           duration: 200,
         );
@@ -61,11 +61,11 @@ class RouteGenerator {
   }
 }
 
-class FadeRoute extends PageRouteBuilder {
+class SuaaFadeRoute extends PageRouteBuilder {
   final Widget page;
   final int duration;
 
-  FadeRoute({this.page, this.duration})
+  SuaaFadeRoute({this.page, this.duration})
       : super(
           pageBuilder: (
             BuildContext context,
