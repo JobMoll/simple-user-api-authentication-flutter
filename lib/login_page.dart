@@ -34,61 +34,73 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: TextField(
-                      controller: usernameOrEmailTextfield,
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white,
-                      ),
-                      autocorrect: false,
-                      cursorColor: Colors.white,
-                      decoration: InputDecoration(
-                        hintStyle: TextStyle(
-                          fontSize: 17,
-                          color: Colors.white70,
+                  AutofillGroup(
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: TextField(
+                            controller: usernameOrEmailTextfield,
+                            keyboardType: TextInputType.emailAddress,
+                            autofillHints: [
+                              AutofillHints.username,
+                              AutofillHints.email
+                            ],
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.white,
+                            ),
+                            autocorrect: false,
+                            cursorColor: Colors.white,
+                            decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                fontSize: 17,
+                                color: Colors.white70,
+                              ),
+                              hintText: 'Username or email',
+                              suffixIcon: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.all(20),
+                            ),
+                          ),
                         ),
-                        hintText: 'Username or email',
-                        suffixIcon: Icon(
-                          Icons.person,
-                          color: Colors.white,
+                        Container(
+                          margin: EdgeInsets.only(top: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: TextField(
+                            controller: passwordTextfield,
+                            autofillHints: [AutofillHints.password],
+                            obscureText: true,
+                            cursorColor: Colors.white,
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.white,
+                            ),
+                            decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                fontSize: 17,
+                                color: Colors.white70,
+                              ),
+                              hintText: 'Password',
+                              suffixIcon: Icon(
+                                Icons.lock,
+                                color: Colors.white,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.all(20),
+                            ),
+                          ),
                         ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(20),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: TextField(
-                      controller: passwordTextfield,
-                      obscureText: true,
-                      cursorColor: Colors.white,
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        hintStyle: TextStyle(
-                          fontSize: 17,
-                          color: Colors.white70,
-                        ),
-                        hintText: 'Password',
-                        suffixIcon: Icon(
-                          Icons.lock,
-                          color: Colors.white,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(20),
-                      ),
+                      ],
                     ),
                   ),
                   GestureDetector(

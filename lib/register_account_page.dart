@@ -9,7 +9,8 @@ class RegisterAccountPage extends StatefulWidget {
 }
 
 class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
-  TextEditingController usernameOrEmailTextfield = TextEditingController();
+  TextEditingController usernameTextfield = TextEditingController();
+  TextEditingController emailTextfield = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: TextField(
-                    controller: usernameOrEmailTextfield,
+                    controller: usernameTextfield,
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.white,
@@ -46,7 +47,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                         fontSize: 17,
                         color: Colors.white70,
                       ),
-                      hintText: 'Username or email',
+                      hintText: 'Username',
                       suffixIcon: Icon(
                         Icons.person,
                         color: Colors.white,
@@ -56,26 +57,66 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                     ),
                   ),
                 ),
+                Container(
+                  margin: EdgeInsets.only(top: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: TextField(
+                    controller: emailTextfield,
+                    autofillHints: [AutofillHints.email],
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.white,
+                    ),
+                    cursorColor: Colors.white,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(
+                        fontSize: 17,
+                        color: Colors.white70,
+                      ),
+                      hintText: 'Email',
+                      suffixIcon: Icon(
+                        Icons.mail,
+                        color: Colors.white,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(20),
+                    ),
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
-                    if (usernameOrEmailTextfield.text != '') {
+                    if (usernameTextfield.text != '' &&
+                        emailTextfield.text != '') {
                       SimpleUserAPIAuthentication.showSimpleMessage(
-                          'One moment while we prepare your url',
-                          'We are preparing your reset url...',
+                          'Trying to register',
+                          'We are trying to register your new account...',
                           'info',
                           100);
 
-                      SimpleUserAPIAuthentication.forgotPassword(
-                        usernameOrEmailTextfield.text,
-                      );
+                      if (usernameTextfield.text.contains(' ')) {
+                        SimpleUserAPIAuthentication.showSimpleMessage(
+                            'Username is not valid :(',
+                            "A username can't have spaces in it...",
+                            'error',
+                            3);
+                        return;
+                      }
+
+                      SimpleUserAPIAuthentication.registerNewUser(
+                          usernameTextfield.text, emailTextfield.text);
 
                       setState(() {
-                        usernameOrEmailTextfield.text = '';
+                        usernameTextfield.text = '';
+                        emailTextfield.text = '';
                       });
                     } else {
                       SimpleUserAPIAuthentication.showSimpleMessage(
-                          "You can't leave this field empty",
-                          'You forgot to fill in  the field...',
+                          'Fill in all required fields',
+                          'You forgot to fill in one of the fields...',
                           'error',
                           3);
                     }
@@ -89,7 +130,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
-                        'Create new password',
+                        'Create a new account',
                         style: TextStyle(fontSize: 17, color: Colors.white),
                       )),
                 )

@@ -34,11 +34,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   child: TextField(
                     controller: usernameOrEmailTextfield,
+                    autofillHints: [AutofillHints.email],
+                    keyboardType: TextInputType.emailAddress,
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.white,
                     ),
-                    autocorrect: false,
                     cursorColor: Colors.white,
                     decoration: InputDecoration(
                       hintStyle: TextStyle(
@@ -88,7 +89,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
-                        'Create new password',
+                        'Create a new password',
                         style: TextStyle(fontSize: 17, color: Colors.white),
                       )),
                 )

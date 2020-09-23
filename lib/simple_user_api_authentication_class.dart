@@ -31,7 +31,6 @@ class SimpleUserAPIAuthentication {
             data: loginData)
         .then((response) async {
       var responseData = response.data;
-      print(responseData);
       if (response.statusCode == 200) {
         await storage.write(
             key: 'simple_user_api_authentication_refresh_token',
@@ -109,7 +108,7 @@ class SimpleUserAPIAuthentication {
         }
       });
     } else {
-      userLogout();
+      userLogout(true);
     }
   }
 
@@ -139,50 +138,68 @@ class SimpleUserAPIAuthentication {
     });
   }
 
-  static userLogout() async {
+  static userLogout([bool initialLoad]) async {
     String userID =
         await storage.read(key: 'simple_user_api_authentication_user_id');
 
-    Map<String, String> accessTokenData = {'user_id': userID};
+    if (userID != null && userID != '') {
+      Map<String, String> requestData = {'user_id': userID};
 
-    dio
-        .post('/wp-json/simple-user-api-authentication/delete-user-tokens',
-            data: accessTokenData)
-        .then((response) async {
-      if (response.statusCode == 200) {
-        await storage.delete(
-            key: 'simple_user_api_authentication_refresh_token');
-        await storage.delete(
-            key: 'simple_user_api_authentication_access_token');
-        await storage.delete(key: 'simple_user_api_authentication_user_id');
+      dio
+          .post('/wp-json/simple-user-api-authentication/delete-user-tokens',
+              data: requestData)
+          .then((response) async {
+        if (response.statusCode == 200) {
+          await storage.delete(
+              key: 'simple_user_api_authentication_refresh_token');
+          await storage.delete(
+              key: 'simple_user_api_authentication_access_token');
+          await storage.delete(key: 'simple_user_api_authentication_user_id');
 
-        Get.offNamed("/loginPage");
+          Get.offNamed("/loginPage");
 
-        SimpleUserAPIAuthentication.showSimpleMessage('Loggin out succesful!',
-            'You are succesfully loggedout :)', 'success', 3);
-      } else {
-        requestAccessToken(userLogout);
-      }
-    });
+          if (initialLoad != true) {
+            SimpleUserAPIAuthentication.showSimpleMessage(
+                'Loggin out succesful!',
+                'You are succesfully loggedout :)',
+                'success',
+                3);
+          }
+        } else {
+          requestAccessToken(userLogout);
+        }
+      });
+    } else {
+      Get.offNamed("/loginPage");
+    }
   }
 
-  static forgotPassword(usernameOrEmail) async {
+  static forgotPassword(String usernameOrEmail) async {
     Map<String, String> requestData = {'username_or_email': usernameOrEmail};
 
     dio
         .post('/wp-json/simple-user-api-authentication/forgot-password',
             data: requestData)
         .then((response) async {
+      var responseData = response.data;
       if (response.statusCode == 200) {
-        // Get.offNamed("/loginPage");
+        SimpleUserAPIAuthentication.showSimpleMessage(responseData['title'],
+            responseData['message'], responseData['status'], 3);
+      }
+    });
+  }
 
-        SimpleUserAPIAuthentication.showSimpleMessage(
-            'Password forgot url send!',
-            'Click on the link in the email to reset your password',
-            'success',
-            3);
-      } else {
-        requestAccessToken(userLogout);
+  static registerNewUser(String username, String email) async {
+    Map<String, String> requestData = {'username': username, 'email': email};
+
+    dio
+        .post('/wp-json/simple-user-api-authentication/register-a-new-user',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+      if (response.statusCode == 200) {
+        SimpleUserAPIAuthentication.showSimpleMessage(responseData['title'],
+            responseData['message'], responseData['status'], 3);
       }
     });
   }
