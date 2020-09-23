@@ -24,8 +24,9 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(
-          builder: (_) => LoggedinOrNotPage(),
+        return FadeRoute(
+          page: LoggedinOrNotPage(),
+          duration: 200,
         );
         break;
 
@@ -36,8 +37,9 @@ class RouteGenerator {
 
         break;
       case '/loginPage':
-        return MaterialPageRoute(
-          builder: (_) => LoginPage(),
+        return FadeRoute(
+          page: LoginPage(),
+          duration: 200,
         );
 
       default:
@@ -57,4 +59,30 @@ class RouteGenerator {
       );
     });
   }
+}
+
+class FadeRoute extends PageRouteBuilder {
+  final Widget page;
+  final int duration;
+
+  FadeRoute({this.page, this.duration})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionDuration: Duration(milliseconds: duration),
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
 }
