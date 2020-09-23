@@ -40,6 +40,10 @@ class SimpleUserAPIAuthentication {
             key: 'simple_user_api_authentication_refresh_token',
             value: responseData['refresh_token']);
 
+        await storage.write(
+            key: 'simple_user_api_authentication_user_id',
+            value: responseData['user_id'].toString());
+
         SimpleUserAPIAuthentication.showSimpleMessage('Your login is correct!',
             'You are successfully loggedin', 'success', 3);
 
@@ -73,7 +77,7 @@ class SimpleUserAPIAuthentication {
           return responseData['message'];
         }
       } else {
-        Get.offNamed("/loginPage");
+        userLogout();
       }
     });
   }
@@ -98,10 +102,12 @@ class SimpleUserAPIAuthentication {
               value: responseData['access_token']);
 
           Get.offNamed("/informationPage");
+        } else {
+          userLogout();
         }
       });
     } else {
-      Get.offNamed("/loginPage");
+      userLogout();
     }
   }
 
@@ -124,18 +130,16 @@ class SimpleUserAPIAuthentication {
         Map<String, dynamic> userDataJsonString = responseData['user_data'];
         print(userDataJsonString);
       } else {
-        print('refresh 2');
         return requestAccessToken(getUserData);
       }
     });
   }
 
   static userLogout() async {
-    String accessToken = await storage.read(
-      key: 'simple_user_api_authentication_access_token',
-    );
+    String userID =
+        await storage.read(key: 'simple_user_api_authentication_user_id');
 
-    Map<String, String> accessTokenData = {'access_token': accessToken};
+    Map<String, String> accessTokenData = {'user_id': userID};
 
     dio
         .post('/wp-json/simple-user-api-authentication/delete-user-tokens',
@@ -146,6 +150,8 @@ class SimpleUserAPIAuthentication {
             key: 'simple_user_api_authentication_refresh_token');
         await storage.delete(
             key: 'simple_user_api_authentication_access_token');
+        await storage.delete(key: 'simple_user_api_authentication_user_id');
+
         Get.offNamed("/loginPage");
 
         SimpleUserAPIAuthentication.showSimpleMessage('Loggin out succesful!',
