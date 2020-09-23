@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class LoginPage extends StatefulWidget {
@@ -8,7 +9,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController usernameTextfield = TextEditingController();
+  TextEditingController usernameOrEmailTextfield = TextEditingController();
   TextEditingController passwordTextfield = TextEditingController();
 
   @override
@@ -39,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: TextField(
-                      controller: usernameTextfield,
+                      controller: usernameOrEmailTextfield,
                       style: TextStyle(
                         fontSize: 17,
                         color: Colors.white,
@@ -93,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                   GestureDetector(
                     onTap: () {
                       if (passwordTextfield.text != '' &&
-                          usernameTextfield.text != '') {
+                          usernameOrEmailTextfield.text != '') {
                         SimpleUserAPIAuthentication.showSimpleMessage(
                             'Checking if info is correct',
                             'One moment while we check you account...',
@@ -101,7 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                             100);
 
                         SimpleUserAPIAuthentication.requestRefreshToken(
-                            usernameTextfield.text, passwordTextfield.text);
+                            usernameOrEmailTextfield.text,
+                            passwordTextfield.text);
                       } else {
                         SimpleUserAPIAuthentication.showSimpleMessage(
                             'Fill in all required fields',
@@ -111,18 +113,48 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     child: Container(
-                        margin: EdgeInsets.only(top: 12),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          'Login',
-                          style: TextStyle(fontSize: 17, color: Colors.white),
-                        )),
-                  )
+                      margin: EdgeInsets.only(top: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        'Login',
+                        style: TextStyle(fontSize: 17, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 65),
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.toNamed('/registerAccountPage');
+                      },
+                      child: Text(
+                        'Create a new account',
+                        style: TextStyle(fontSize: 17, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 9),
+                    child: Divider(
+                      color: Colors.black38,
+                    ),
+                  ),
+                  Container(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.toNamed('/forgotPasswordPage');
+                      },
+                      child: Text(
+                        'I forgot my password',
+                        style: TextStyle(fontSize: 17, color: Colors.black),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

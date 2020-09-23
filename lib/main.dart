@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:simple_user_api_authentication/loggedin_pages/information_page.dart';
 import 'package:simple_user_api_authentication/loggedin_or_not.dart';
 import 'package:simple_user_api_authentication/login_page.dart';
+import 'forgot_password.dart';
 import 'loggedin_pages/profile_page.dart';
 
 void main() {
@@ -36,19 +37,28 @@ class RouteGenerator {
           page: InformationPage(),
           duration: 0,
         );
-
         break;
+
       case '/loginPage':
         return SuaaFadeRoute(
           page: LoginPage(),
           duration: 200,
         );
+        break;
 
       case '/settingsPage':
         return SuaaFadeRoute(
           page: SettingsPage(),
-          duration: 0,
+          duration: 200,
         );
+        break;
+
+      case '/forgotPasswordPage':
+        return SuaaFadeRoute(
+          page: ForgotPasswordPage(),
+          duration: 200,
+        );
+        break;
 
       default:
         return _errorRoute();

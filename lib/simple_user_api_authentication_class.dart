@@ -20,9 +20,9 @@ final dio = dioCalls.Dio(
 final storage = new secureStorage.FlutterSecureStorage();
 
 class SimpleUserAPIAuthentication {
-  static requestRefreshToken(String username, String password) {
+  static requestRefreshToken(String usernameOrEmail, String password) {
     Map<String, String> loginData = {
-      'username': username,
+      'username_or_email': usernameOrEmail,
       'password': password
     };
 
@@ -160,6 +160,27 @@ class SimpleUserAPIAuthentication {
 
         SimpleUserAPIAuthentication.showSimpleMessage('Loggin out succesful!',
             'You are succesfully loggedout :)', 'success', 3);
+      } else {
+        requestAccessToken(userLogout);
+      }
+    });
+  }
+
+  static forgotPassword(usernameOrEmail) async {
+    Map<String, String> requestData = {'username_or_email': usernameOrEmail};
+
+    dio
+        .post('/wp-json/simple-user-api-authentication/forgot-password',
+            data: requestData)
+        .then((response) async {
+      if (response.statusCode == 200) {
+        // Get.offNamed("/loginPage");
+
+        SimpleUserAPIAuthentication.showSimpleMessage(
+            'Password forgot url send!',
+            'Click on the link in the email to reset your password',
+            'success',
+            3);
       } else {
         requestAccessToken(userLogout);
       }
