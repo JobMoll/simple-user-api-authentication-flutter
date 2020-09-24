@@ -73,6 +73,7 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: accentColor,
           title: Text('Personal details'),
         ),
         body: SafeArea(
@@ -127,8 +128,9 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                           textInputType: TextInputType.emailAddress,
                           autofillHints: [AutofillHints.email],
                         ),
-                        GestureDetector(
-                          onTap: () {
+                        SuaaGlobalButton(
+                          text: 'Change personal data',
+                          functionOnTap: () {
                             if (passwordTextfield.text != '' &&
                                 passwordConfirmTextfield.text != '' &&
                                 passwordConfirmTextfield.text ==
@@ -151,20 +153,6 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                                   3);
                             }
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(top: 12),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 14),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              'Change personal details',
-                              style:
-                                  TextStyle(fontSize: 17, color: Colors.white),
-                            ),
-                          ),
                         ),
                       ],
                     ),
@@ -242,8 +230,9 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                           autofillHints: [AutofillHints.password],
                           obscureText: true,
                         ),
-                        GestureDetector(
-                          onTap: () {
+                        SuaaGlobalButton(
+                          text: 'Change password',
+                          functionOnTap: () {
                             if (passwordTextfield.text != '' &&
                                 passwordConfirmTextfield.text != '' &&
                                 passwordConfirmTextfield.text ==
@@ -287,20 +276,6 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                                   3);
                             }
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(top: 12),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 14),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              'Change password',
-                              style:
-                                  TextStyle(fontSize: 17, color: Colors.white),
-                            ),
-                          ),
                         ),
                       ],
                     ),

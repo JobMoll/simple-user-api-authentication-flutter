@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class InformationPage extends StatefulWidget {
@@ -31,18 +32,14 @@ class _InformationPageState extends State<InformationPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: accentColor,
           leading: Container(),
           title: Text(
             'Information',
-            style: TextStyle(color: Colors.black),
           ),
           actions: [
             IconButton(
-                icon: Icon(
-                  Icons.refresh,
-                  color: Colors.black,
-                ),
+                icon: Icon(Icons.refresh, color: accentOppositeColor),
                 onPressed: () {
                   SimpleUserAPIAuthentication.showSimpleMessage(
                       'Fetching user data...',

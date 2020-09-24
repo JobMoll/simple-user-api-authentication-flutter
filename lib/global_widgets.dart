@@ -4,8 +4,11 @@ Color mainColor = Colors.white; // for the background etc
 Color accentColor = Colors.black; // for the buttons, textfields etc
 Color accentOppositeColor = Colors.white; // used for the icons, cursorcolor etc
 
-TextStyle bodyText = TextStyle(fontSize: 17, color: Colors.black);
-TextStyle accentElements = TextStyle(fontSize: 17, color: accentOppositeColor);
+BorderRadius widgetsBorderRadius = BorderRadius.circular(5);
+
+TextStyle bodyTextStyle = TextStyle(fontSize: 17, color: Colors.black);
+TextStyle accentElementsTextStyle =
+    TextStyle(fontSize: 17, color: accentOppositeColor);
 
 class SuaaGlobalTextfield extends StatelessWidget {
   const SuaaGlobalTextfield({
@@ -39,21 +42,21 @@ class SuaaGlobalTextfield extends StatelessWidget {
       margin: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
         color: accentColor,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: widgetsBorderRadius,
       ),
       child: TextField(
         controller: controller,
         focusNode: controllerNode,
         keyboardType: textInputType,
         autofillHints: autofillHints,
-        style: accentElements,
+        style: accentElementsTextStyle,
         autocorrect: autoCorrect ?? false,
         obscureText: obscureText ?? false,
         cursorColor: accentOppositeColor,
         onEditingComplete: () => functionOnEditingComplete,
         onChanged: functionOnChange,
         decoration: InputDecoration(
-          hintStyle: accentElements.copyWith(
+          hintStyle: accentElementsTextStyle.copyWith(
               color: accentOppositeColor.withOpacity(0.65)),
           hintText: hintText,
           suffixIcon: Icon(
@@ -62,6 +65,33 @@ class SuaaGlobalTextfield extends StatelessWidget {
           ),
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(18),
+        ),
+      ),
+    );
+  }
+}
+
+class SuaaGlobalButton extends StatelessWidget {
+  const SuaaGlobalButton(
+      {Key key, @required this.text, @required this.functionOnTap})
+      : super(key: key);
+  final String text;
+  final Function functionOnTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: functionOnTap,
+      child: Container(
+        margin: EdgeInsets.only(top: 12),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        decoration: BoxDecoration(
+          color: accentColor,
+          borderRadius: widgetsBorderRadius,
+        ),
+        child: Text(
+          text,
+          style: accentElementsTextStyle,
         ),
       ),
     );

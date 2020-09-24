@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
         },
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.blue,
+            backgroundColor: accentColor,
             leading: Container(),
             title: Text('Login'),
           ),
@@ -65,8 +65,9 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
+                  SuaaGlobalButton(
+                    text: 'Login',
+                    functionOnTap: () {
                       if (passwordTextfield.text != '' &&
                           usernameOrEmailTextfield.text != '') {
                         SimpleUserAPIAuthentication.showSimpleMessage(
@@ -86,19 +87,6 @@ class _LoginPageState extends State<LoginPage> {
                             3);
                       }
                     },
-                    child: Container(
-                      margin: EdgeInsets.only(top: 12),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text(
-                        'Login',
-                        style: TextStyle(fontSize: 17, color: Colors.white),
-                      ),
-                    ),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 65),

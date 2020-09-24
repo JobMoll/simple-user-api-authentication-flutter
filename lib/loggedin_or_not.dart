@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class LoggedinOrNotPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _LoggedinOrNotPageState extends State<LoggedinOrNotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: accentColor,
         title: Text('Checking'),
       ),
       body: Center(

@@ -24,7 +24,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: accentColor,
           title: Text('Register account'),
         ),
         body: SafeArea(
@@ -49,8 +49,9 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                   textInputType: TextInputType.emailAddress,
                   autofillHints: [AutofillHints.email],
                 ),
-                GestureDetector(
-                  onTap: () {
+                SuaaGlobalButton(
+                  text: 'Create a new account',
+                  functionOnTap: () {
                     if (usernameTextfield.text != '' &&
                         emailTextfield.text != '') {
                       SimpleUserAPIAuthentication.showSimpleMessage(
@@ -83,19 +84,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                           3);
                     }
                   },
-                  child: Container(
-                      margin: EdgeInsets.only(top: 12),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text(
-                        'Create a new account',
-                        style: TextStyle(fontSize: 17, color: Colors.white),
-                      )),
-                )
+                ),
               ],
             ),
           ),
