@@ -183,39 +183,26 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                passwordTipHasMinLength + minLength.toString(),
-                                style: TextStyle(
-                                    color: hasMinLength
-                                        ? Colors.green
-                                        : Colors.red),
+                              PasswordRequirements(
+                                tip: passwordTipHasMinLength +
+                                    minLength.toString(),
+                                hasRequirement: hasMinLength,
                               ),
-                              Text(
-                                passwordTipHasDigits,
-                                style: TextStyle(
-                                    color:
-                                        hasDigits ? Colors.green : Colors.red),
+                              PasswordRequirements(
+                                tip: passwordTipHasDigits,
+                                hasRequirement: hasDigits,
                               ),
-                              Text(
-                                passwordTipHasLowercase,
-                                style: TextStyle(
-                                    color: hasLowercase
-                                        ? Colors.green
-                                        : Colors.red),
+                              PasswordRequirements(
+                                tip: passwordTipHasLowercase,
+                                hasRequirement: hasLowercase,
                               ),
-                              Text(
-                                passwordTipHasSpecialCharacters,
-                                style: TextStyle(
-                                    color: hasSpecialCharacters
-                                        ? Colors.green
-                                        : Colors.red),
+                              PasswordRequirements(
+                                tip: passwordTipHasSpecialCharacters,
+                                hasRequirement: hasSpecialCharacters,
                               ),
-                              Text(
-                                passwordTipHasUppercase,
-                                style: TextStyle(
-                                    color: hasUppercase
-                                        ? Colors.green
-                                        : Colors.red),
+                              PasswordRequirements(
+                                tip: passwordTipHasUppercase,
+                                hasRequirement: hasUppercase,
                               ),
                             ],
                           ),
@@ -296,6 +283,39 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class PasswordRequirements extends StatelessWidget {
+  const PasswordRequirements({
+    Key key,
+    @required this.tip,
+    this.minLength,
+    @required this.hasRequirement,
+  }) : super(key: key);
+
+  final String tip;
+  final int minLength;
+  final bool hasRequirement;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(
+          hasRequirement ? Icons.check : Icons.close,
+          color: hasRequirement ? Colors.green : Colors.black,
+          size: 20,
+        ),
+        SizedBox(
+          width: 4,
+        ),
+        Text(
+          tip,
+          style: TextStyle(color: hasRequirement ? Colors.green : Colors.black),
+        ),
+      ],
     );
   }
 }

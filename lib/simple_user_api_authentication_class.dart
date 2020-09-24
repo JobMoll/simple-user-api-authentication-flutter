@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
 import 'package:get/get.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 
 final dio = dioCalls.Dio(
   dioCalls.BaseOptions(
@@ -263,7 +264,7 @@ class SimpleUserAPIAuthentication {
       padding: EdgeInsets.all(10),
       borderRadius: 0,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.black,
       shouldIconPulse: true,
       barBlur: 100,
       isDismissible: true,
