@@ -136,6 +136,35 @@ class SimpleUserAPIAuthentication {
     });
   }
 
+  static changePassword(String newPassword) async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> requestData = {
+      'access_token': accessToken,
+      'new_password': newPassword
+    };
+
+    dio
+        .post('/wp-json/simple-user-api-authentication/change-password',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+      print(responseData);
+
+      if (response.statusCode == 200) {
+        SimpleUserAPIAuthentication.showSimpleMessage(responseData['title'],
+            responseData['message'], responseData['status'], 3);
+
+        if (responseData['status'] == 'success') {
+          userLogout();
+        }
+      } else {
+        return requestAccessToken(changePassword(newPassword));
+      }
+    });
+  }
+
   static userLogout([bool initialLoad]) async {
     String userID =
         await storage.read(key: 'simple_user_api_authentication_user_id');
