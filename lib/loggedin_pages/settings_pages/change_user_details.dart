@@ -112,6 +112,10 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                                   icon: Icons.person,
                                   textInputType: TextInputType.name,
                                   autofillHints: [AutofillHints.givenName],
+                                  functionOnEditingComplete: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(lastnameTextfieldNode);
+                                  },
                                 ),
                               ),
                             ),
@@ -125,6 +129,10 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                                   icon: Icons.person,
                                   textInputType: TextInputType.name,
                                   autofillHints: [AutofillHints.familyName],
+                                  functionOnEditingComplete: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(emailTextfieldNode);
+                                  },
                                 ),
                               ),
                             ),
@@ -208,16 +216,21 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                           ),
                         ),
                         SuaaGlobalTextfield(
-                            controller: passwordTextfield,
-                            controllerNode: passwordTextfieldNode,
-                            hintText: 'New password',
-                            icon: Icons.lock,
-                            textInputType: TextInputType.text,
-                            autofillHints: [AutofillHints.password],
-                            obscureText: true,
-                            functionOnChange: (string) {
-                              checkPasswordStrength(string, minLength);
-                            }),
+                          controller: passwordTextfield,
+                          controllerNode: passwordTextfieldNode,
+                          hintText: 'New password',
+                          icon: Icons.lock,
+                          textInputType: TextInputType.text,
+                          autofillHints: [AutofillHints.password],
+                          obscureText: true,
+                          functionOnChange: (string) {
+                            checkPasswordStrength(string, minLength);
+                          },
+                          functionOnEditingComplete: () {
+                            FocusScope.of(context)
+                                .requestFocus(passwordConfirmTextfieldNode);
+                          },
+                        ),
                         SuaaGlobalTextfield(
                           controller: passwordConfirmTextfield,
                           controllerNode: passwordConfirmTextfieldNode,

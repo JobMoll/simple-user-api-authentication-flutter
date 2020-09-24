@@ -57,6 +57,10 @@ class _LoginPageState extends State<LoginPage> {
                             AutofillHints.email,
                             AutofillHints.username
                           ],
+                          functionOnEditingComplete: () {
+                            FocusScope.of(context)
+                                .requestFocus(passwordTextfieldNode);
+                          },
                         ),
                         SuaaGlobalTextfield(
                           controller: passwordTextfield,

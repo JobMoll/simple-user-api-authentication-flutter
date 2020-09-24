@@ -45,6 +45,9 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                   icon: Icons.person,
                   textInputType: TextInputType.text,
                   autofillHints: [AutofillHints.username],
+                  functionOnEditingComplete: () {
+                    FocusScope.of(context).requestFocus(emailTextfieldNode);
+                  },
                 ),
                 SuaaGlobalTextfield(
                   controller: emailTextfield,

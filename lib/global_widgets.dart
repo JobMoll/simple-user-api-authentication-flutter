@@ -56,7 +56,7 @@ class SuaaGlobalTextfield extends StatelessWidget {
         autocorrect: autoCorrect ?? false,
         obscureText: obscureText ?? false,
         cursorColor: accentOppositeColor,
-        onEditingComplete: () => functionOnEditingComplete,
+        onEditingComplete: functionOnEditingComplete,
         onChanged: functionOnChange,
         decoration: InputDecoration(
           hintStyle: accentElementsTextStyle.copyWith(
