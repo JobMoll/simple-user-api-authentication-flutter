@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
 import 'package:get/get.dart';
-import 'loggedin_pages/information_page.dart';
 
 final dio = dioCalls.Dio(
   dioCalls.BaseOptions(
@@ -43,7 +42,6 @@ class SimpleUserAPIAuthentication {
         SimpleUserAPIAuthentication.showSimpleMessage('Your login is correct!',
             'You are successfully loggedin', 'success', 3);
 
-        // Get.offNamed("/informationPage");
         Get.offNamed('/informationPage');
       } else {
         showSimpleMessage(

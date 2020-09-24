@@ -12,6 +12,9 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
   TextEditingController usernameTextfield = TextEditingController();
   TextEditingController emailTextfield = TextEditingController();
 
+  FocusNode usernameTextfieldNode = FocusNode();
+  FocusNode emailTextfieldNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -36,12 +39,16 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                   ),
                   child: TextField(
                     controller: usernameTextfield,
+                    focusNode: usernameTextfieldNode,
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.white,
                     ),
                     autocorrect: false,
                     cursorColor: Colors.white,
+                    onEditingComplete: () {
+                      emailTextfieldNode.requestFocus();
+                    },
                     decoration: InputDecoration(
                       hintStyle: TextStyle(
                         fontSize: 17,
@@ -65,6 +72,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                   ),
                   child: TextField(
                     controller: emailTextfield,
+                    focusNode: emailTextfieldNode,
                     autofillHints: [AutofillHints.email],
                     style: TextStyle(
                       fontSize: 17,

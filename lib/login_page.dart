@@ -12,6 +12,9 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController usernameOrEmailTextfield = TextEditingController();
   TextEditingController passwordTextfield = TextEditingController();
 
+  FocusNode usernameOrEmailTextfieldNode = FocusNode();
+  FocusNode passwordTextfieldNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -34,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  // TODO wait for a solution from the Flutter team
                   AutofillGroup(
                     child: Column(
                       children: [
@@ -44,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: TextField(
                             controller: usernameOrEmailTextfield,
+                            focusNode: usernameOrEmailTextfieldNode,
                             keyboardType: TextInputType.emailAddress,
                             autofillHints: [
                               AutofillHints.username,
@@ -55,6 +60,10 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             autocorrect: false,
                             cursorColor: Colors.white,
+                            onEditingComplete: () {
+                              FocusScope.of(context).unfocus();
+                              passwordTextfieldNode.requestFocus();
+                            },
                             decoration: InputDecoration(
                               hintStyle: TextStyle(
                                 fontSize: 17,
@@ -78,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: TextField(
                             controller: passwordTextfield,
+                            focusNode: passwordTextfieldNode,
                             autofillHints: [AutofillHints.password],
                             obscureText: true,
                             cursorColor: Colors.white,

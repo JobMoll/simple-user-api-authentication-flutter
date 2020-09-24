@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simple_user_api_authentication/loggedin_pages/settings_pages/change_user_details.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -83,6 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: GestureDetector(
                           onTap: () async {
                             //  SimpleUserAPIAuthentication.userLogout();
+                            Get.to(ChangeUserDetailsPage());
                           },
                           child: Row(
                             children: [
@@ -94,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 width: 25,
                               ),
                               Text(
-                                'Personal information',
+                                'Personal details',
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 17),
                               ),
