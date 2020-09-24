@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
@@ -10,14 +9,6 @@ class InformationPage extends StatefulWidget {
 }
 
 class _InformationPageState extends State<InformationPage> {
-  void _onItemTapped(int index) {
-    if (index == 0) {
-      Get.toNamed('/informationPage');
-    } else if (index == 1) {
-      Get.toNamed('/settingsPage');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -31,11 +22,14 @@ class _InformationPageState extends State<InformationPage> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: mainColor,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: accentOppositeColor),
           backgroundColor: accentColor,
           leading: Container(),
           title: Text(
             'Information',
+            style: smallHeadingTextStyle.copyWith(color: accentOppositeColor),
           ),
           actions: [
             IconButton(
@@ -51,19 +45,9 @@ class _InformationPageState extends State<InformationPage> {
                 })
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 0,
-          onTap: _onItemTapped,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
+        bottomNavigationBar: SuaaGlobalNavigationBar(
+          notActiveTab1: true,
+          notActiveTab2: false,
         ),
         body: SafeArea(
           child: Container(

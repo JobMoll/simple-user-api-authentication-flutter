@@ -27,10 +27,15 @@ class _LoginPageState extends State<LoginPage> {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Scaffold(
+          backgroundColor: mainColor,
           appBar: AppBar(
+            iconTheme: IconThemeData(color: accentOppositeColor),
             backgroundColor: accentColor,
             leading: Container(),
-            title: Text('Login'),
+            title: Text(
+              'Login',
+              style: smallHeadingTextStyle.copyWith(color: accentOppositeColor),
+            ),
           ),
           body: SafeArea(
             child: Container(
@@ -96,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Text(
                         'Create a new account',
-                        style: TextStyle(fontSize: 17, color: Colors.black),
+                        style: bodyTextStyle,
                       ),
                     ),
                   ),
@@ -113,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Text(
                         'I forgot my password',
-                        style: TextStyle(fontSize: 17, color: Colors.black),
+                        style: bodyTextStyle,
                       ),
                     ),
                   ),

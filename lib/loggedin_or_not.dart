@@ -18,16 +18,10 @@ class _LoggedinOrNotPageState extends State<LoggedinOrNotPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: accentColor,
-        title: Text('Checking'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Loading...'),
-          ],
+      backgroundColor: mainColor,
+      body: SafeArea(
+        child: Center(
+          child: Container(),
         ),
       ),
     );

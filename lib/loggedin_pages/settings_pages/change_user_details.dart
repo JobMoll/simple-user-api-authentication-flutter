@@ -72,9 +72,14 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
+        backgroundColor: mainColor,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: accentOppositeColor),
           backgroundColor: accentColor,
-          title: Text('Personal details'),
+          title: Text(
+            'Personal details',
+            style: smallHeadingTextStyle.copyWith(color: accentOppositeColor),
+          ),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -92,7 +97,7 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                         Container(
                           child: Text(
                             'Personal information',
-                            style: TextStyle(fontSize: 18),
+                            style: smallHeadingTextStyle,
                           ),
                         ),
                         Row(
@@ -170,7 +175,7 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                         Container(
                           child: Text(
                             'Change your password',
-                            style: TextStyle(fontSize: 18),
+                            style: smallHeadingTextStyle,
                           ),
                         ),
                         Container(

@@ -23,9 +23,14 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
+        backgroundColor: mainColor,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: accentOppositeColor),
           backgroundColor: accentColor,
-          title: Text('Register account'),
+          title: Text(
+            'Register account',
+            style: smallHeadingTextStyle.copyWith(color: accentOppositeColor),
+          ),
         ),
         body: SafeArea(
           child: Container(

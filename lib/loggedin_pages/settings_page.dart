@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/loggedin_pages/settings_pages/change_user_details.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
@@ -10,14 +11,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  void _onItemTapped(int index) {
-    if (index == 0) {
-      Get.toNamed('/informationPage');
-    } else if (index == 1) {
-      Get.toNamed('/settingsPage');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -30,19 +23,10 @@ class _SettingsPageState extends State<SettingsPage> {
         return false;
       },
       child: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 1,
-          onTap: _onItemTapped,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
+        backgroundColor: mainColor,
+        bottomNavigationBar: SuaaGlobalNavigationBar(
+          notActiveTab1: false,
+          notActiveTab2: true,
         ),
         body: SafeArea(
           child: Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/loggedin_pages/information_page.dart';
 import 'package:simple_user_api_authentication/loggedin_or_not.dart';
 import 'package:simple_user_api_authentication/login_page.dart';
@@ -70,8 +71,12 @@ class RouteGenerator {
   static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(builder: (_) {
       return Scaffold(
+        backgroundColor: mainColor,
         appBar: AppBar(
-          title: Text('Error'),
+          title: Text(
+            'Error',
+            style: smallHeadingTextStyle.copyWith(color: accentOppositeColor),
+          ),
         ),
         body: Center(
           child: Text('Error with page route'),

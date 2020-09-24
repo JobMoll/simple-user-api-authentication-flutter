@@ -19,9 +19,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
+        backgroundColor: mainColor,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: accentOppositeColor),
           backgroundColor: accentColor,
-          title: Text('Forgot password'),
+          title: Text(
+            'Forgot password',
+            style: smallHeadingTextStyle.copyWith(color: accentOppositeColor),
+          ),
         ),
         body: SafeArea(
           child: Container(
