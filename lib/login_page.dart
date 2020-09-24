@@ -80,8 +80,8 @@ class _LoginPageState extends State<LoginPage> {
                       if (passwordTextfield.text != '' &&
                           usernameOrEmailTextfield.text != '') {
                         SimpleUserAPIAuthentication.showSimpleMessage(
-                            'Checking if info is correct',
-                            'One moment while we check you account...',
+                            'Checking if login credentials are correct',
+                            'One moment while we check your account...',
                             'info',
                             100);
 

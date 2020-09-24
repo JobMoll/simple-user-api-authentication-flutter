@@ -188,8 +188,8 @@ class SimpleUserAPIAuthentication {
 
           if (initialLoad != true) {
             SimpleUserAPIAuthentication.showSimpleMessage(
-                'Loggin out succesful!',
-                'You are succesfully loggedout :)',
+                'Successfully logged out',
+                'You are succesfully logged out!',
                 'success',
                 3);
           }
