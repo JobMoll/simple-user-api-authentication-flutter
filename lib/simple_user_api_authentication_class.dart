@@ -44,7 +44,7 @@ class SimpleUserAPIAuthentication {
             'You are successfully loggedin', 'success', 3);
 
         // Get.offNamed("/informationPage");
-        Get.off(InformationPage());
+        Get.offNamed('/informationPage');
       } else {
         showSimpleMessage(
             'Login problem...', responseData['message'], 'error', 3);

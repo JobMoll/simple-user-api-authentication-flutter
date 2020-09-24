@@ -29,43 +29,37 @@ class RouteGenerator {
       case '/':
         return SuaaFadeRoute(
           page: LoggedinOrNotPage(),
-          duration: 200,
+          duration: 170,
         );
         break;
 
       case '/informationPage':
         return SuaaFadeRoute(
           page: InformationPage(),
-          duration: 0,
+          duration: 170,
         );
         break;
 
       case '/loginPage':
         return SuaaFadeRoute(
           page: LoginPage(),
-          duration: 200,
+          duration: 170,
         );
         break;
 
       case '/settingsPage':
         return SuaaFadeRoute(
           page: SettingsPage(),
-          duration: 200,
+          duration: 170,
         );
         break;
 
       case '/forgotPasswordPage':
-        return SuaaFadeRoute(
-          page: ForgotPasswordPage(),
-          duration: 200,
-        );
+        return MaterialPageRoute(builder: (context) => ForgotPasswordPage());
         break;
 
       case '/registerAccountPage':
-        return SuaaFadeRoute(
-          page: RegisterAccountPage(),
-          duration: 200,
-        );
+        return MaterialPageRoute(builder: (context) => RegisterAccountPage());
         break;
 
       default:
