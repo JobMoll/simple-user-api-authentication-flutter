@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class ChangeUserDetailsPage extends StatefulWidget {
@@ -97,110 +98,34 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                         Row(
                           children: [
                             Expanded(
-                              child: Container(
-                                margin: EdgeInsets.only(right: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: TextField(
-                                  controller: firstnameTextfield,
-                                  focusNode: firstnameTextfieldNode,
-                                  autofillHints: [
-                                    AutofillHints.givenName,
-                                  ],
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.white,
-                                  ),
-                                  autocorrect: false,
-                                  cursorColor: Colors.white,
-                                  decoration: InputDecoration(
-                                    hintStyle: TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.white70,
-                                    ),
-                                    hintText: 'First name',
-                                    suffixIcon: Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    ),
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(20),
-                                  ),
-                                ),
+                              child: SuaaGlobalTextfield(
+                                controller: firstnameTextfield,
+                                controllerNode: firstnameTextfieldNode,
+                                hintText: 'First name',
+                                icon: Icons.person,
+                                textInputType: TextInputType.name,
+                                autofillHints: [AutofillHints.givenName],
                               ),
                             ),
                             Expanded(
-                              child: Container(
-                                margin: EdgeInsets.only(left: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: TextField(
-                                  controller: lastnameTextfield,
-                                  focusNode: lastnameTextfieldNode,
-                                  autofillHints: [
-                                    AutofillHints.familyName,
-                                  ],
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.white,
-                                  ),
-                                  autocorrect: false,
-                                  cursorColor: Colors.white,
-                                  decoration: InputDecoration(
-                                    hintStyle: TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.white70,
-                                    ),
-                                    hintText: 'Last name',
-                                    suffixIcon: Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    ),
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(20),
-                                  ),
-                                ),
+                              child: SuaaGlobalTextfield(
+                                controller: lastnameTextfield,
+                                controllerNode: lastnameTextfieldNode,
+                                hintText: 'Last name',
+                                icon: Icons.person,
+                                textInputType: TextInputType.name,
+                                autofillHints: [AutofillHints.familyName],
                               ),
                             ),
                           ],
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: TextField(
-                            controller: emailTextfield,
-                            focusNode: emailTextfieldNode,
-                            keyboardType: TextInputType.emailAddress,
-                            autofillHints: [
-                              AutofillHints.email,
-                            ],
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                            ),
-                            autocorrect: false,
-                            cursorColor: Colors.white,
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white70,
-                              ),
-                              hintText: 'Email',
-                              suffixIcon: Icon(
-                                Icons.email,
-                                color: Colors.white,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(20),
-                            ),
-                          ),
+                        SuaaGlobalTextfield(
+                          controller: emailTextfield,
+                          controllerNode: emailTextfieldNode,
+                          hintText: 'Email',
+                          icon: Icons.mail,
+                          textInputType: TextInputType.emailAddress,
+                          autofillHints: [AutofillHints.email],
                         ),
                         GestureDetector(
                           onTap: () {
@@ -297,76 +222,25 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: TextField(
+                        SuaaGlobalTextfield(
                             controller: passwordTextfield,
-                            focusNode: passwordTextfieldNode,
+                            controllerNode: passwordTextfieldNode,
+                            hintText: 'New password',
+                            icon: Icons.lock,
+                            textInputType: TextInputType.text,
+                            autofillHints: [AutofillHints.password],
                             obscureText: true,
-                            onChanged: (password) {
-                              checkPasswordStrength(password, minLength);
-                            },
-                            autofillHints: [
-                              AutofillHints.newPassword,
-                            ],
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                            ),
-                            autocorrect: false,
-                            cursorColor: Colors.white,
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white70,
-                              ),
-                              hintText: 'New password',
-                              suffixIcon: Icon(
-                                Icons.lock,
-                                color: Colors.white,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(20),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: TextField(
-                            controller: passwordConfirmTextfield,
-                            focusNode: passwordConfirmTextfieldNode,
-                            obscureText: true,
-                            autofillHints: [
-                              AutofillHints.newPassword,
-                            ],
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                            ),
-                            autocorrect: false,
-                            cursorColor: Colors.white,
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white70,
-                              ),
-                              hintText: 'New password confirm',
-                              suffixIcon: Icon(
-                                Icons.lock,
-                                color: Colors.white,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(20),
-                            ),
-                          ),
+                            functionOnChange: (string) {
+                              checkPasswordStrength(string, minLength);
+                            }),
+                        SuaaGlobalTextfield(
+                          controller: passwordConfirmTextfield,
+                          controllerNode: passwordConfirmTextfieldNode,
+                          hintText: 'Confirm new password',
+                          icon: Icons.lock,
+                          textInputType: TextInputType.text,
+                          autofillHints: [AutofillHints.password],
+                          obscureText: true,
                         ),
                         GestureDetector(
                           onTap: () {

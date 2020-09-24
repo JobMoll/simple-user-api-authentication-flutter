@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class LoginPage extends StatefulWidget {
@@ -41,74 +42,25 @@ class _LoginPageState extends State<LoginPage> {
                   AutofillGroup(
                     child: Column(
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: TextField(
-                            controller: usernameOrEmailTextfield,
-                            focusNode: usernameOrEmailTextfieldNode,
-                            keyboardType: TextInputType.emailAddress,
-                            autofillHints: [
-                              AutofillHints.username,
-                              AutofillHints.email
-                            ],
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                            ),
-                            autocorrect: false,
-                            cursorColor: Colors.white,
-                            onEditingComplete: () {
-                              FocusScope.of(context).unfocus();
-                              passwordTextfieldNode.requestFocus();
-                            },
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white70,
-                              ),
-                              hintText: 'Username or email',
-                              suffixIcon: Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(20),
-                            ),
-                          ),
+                        SuaaGlobalTextfield(
+                          controller: usernameOrEmailTextfield,
+                          controllerNode: usernameOrEmailTextfieldNode,
+                          hintText: 'Username or email',
+                          icon: Icons.email,
+                          textInputType: TextInputType.emailAddress,
+                          autofillHints: [
+                            AutofillHints.email,
+                            AutofillHints.username
+                          ],
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: TextField(
-                            controller: passwordTextfield,
-                            focusNode: passwordTextfieldNode,
-                            autofillHints: [AutofillHints.password],
-                            obscureText: true,
-                            cursorColor: Colors.white,
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                            ),
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white70,
-                              ),
-                              hintText: 'Password',
-                              suffixIcon: Icon(
-                                Icons.lock,
-                                color: Colors.white,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(20),
-                            ),
-                          ),
+                        SuaaGlobalTextfield(
+                          controller: passwordTextfield,
+                          controllerNode: passwordTextfieldNode,
+                          hintText: 'Password',
+                          icon: Icons.lock,
+                          textInputType: TextInputType.text,
+                          autofillHints: [AutofillHints.password],
+                          obscureText: true,
                         ),
                       ],
                     ),

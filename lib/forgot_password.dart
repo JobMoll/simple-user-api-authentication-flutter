@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -9,6 +10,7 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   TextEditingController usernameOrEmailTextfield = TextEditingController();
+  FocusNode usernameOrEmailTextfieldNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -27,34 +29,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: TextField(
-                    controller: usernameOrEmailTextfield,
-                    autofillHints: [AutofillHints.email],
-                    keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.white,
-                    ),
-                    cursorColor: Colors.white,
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white70,
-                      ),
-                      hintText: 'Username or email',
-                      suffixIcon: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(20),
-                    ),
-                  ),
+                SuaaGlobalTextfield(
+                  controller: usernameOrEmailTextfield,
+                  controllerNode: usernameOrEmailTextfieldNode,
+                  hintText: 'Username or email',
+                  icon: Icons.email,
+                  textInputType: TextInputType.emailAddress,
+                  autofillHints: [AutofillHints.email, AutofillHints.username],
                 ),
                 GestureDetector(
                   onTap: () {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class RegisterAccountPage extends StatefulWidget {
@@ -32,68 +33,21 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: TextField(
-                    controller: usernameTextfield,
-                    focusNode: usernameTextfieldNode,
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.white,
-                    ),
-                    autocorrect: false,
-                    cursorColor: Colors.white,
-                    onEditingComplete: () {
-                      emailTextfieldNode.requestFocus();
-                    },
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white70,
-                      ),
-                      hintText: 'Username',
-                      suffixIcon: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(20),
-                    ),
-                  ),
+                SuaaGlobalTextfield(
+                  controller: usernameTextfield,
+                  controllerNode: usernameTextfieldNode,
+                  hintText: 'Username',
+                  icon: Icons.person,
+                  textInputType: TextInputType.text,
+                  autofillHints: [AutofillHints.username],
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: TextField(
-                    controller: emailTextfield,
-                    focusNode: emailTextfieldNode,
-                    autofillHints: [AutofillHints.email],
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.white,
-                    ),
-                    cursorColor: Colors.white,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white70,
-                      ),
-                      hintText: 'Email',
-                      suffixIcon: Icon(
-                        Icons.mail,
-                        color: Colors.white,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(20),
-                    ),
-                  ),
+                SuaaGlobalTextfield(
+                  controller: emailTextfield,
+                  controllerNode: emailTextfieldNode,
+                  hintText: 'Email',
+                  icon: Icons.email,
+                  textInputType: TextInputType.emailAddress,
+                  autofillHints: [AutofillHints.email],
                 ),
                 GestureDetector(
                   onTap: () {
