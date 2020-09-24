@@ -90,7 +90,6 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          margin: EdgeInsets.only(bottom: 12),
                           child: Text(
                             'Personal information',
                             style: TextStyle(fontSize: 18),
@@ -99,23 +98,29 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                         Row(
                           children: [
                             Expanded(
-                              child: SuaaGlobalTextfield(
-                                controller: firstnameTextfield,
-                                controllerNode: firstnameTextfieldNode,
-                                hintText: 'First name',
-                                icon: Icons.person,
-                                textInputType: TextInputType.name,
-                                autofillHints: [AutofillHints.givenName],
+                              child: Container(
+                                margin: EdgeInsets.only(right: 6),
+                                child: SuaaGlobalTextfield(
+                                  controller: firstnameTextfield,
+                                  controllerNode: firstnameTextfieldNode,
+                                  hintText: 'First name',
+                                  icon: Icons.person,
+                                  textInputType: TextInputType.name,
+                                  autofillHints: [AutofillHints.givenName],
+                                ),
                               ),
                             ),
                             Expanded(
-                              child: SuaaGlobalTextfield(
-                                controller: lastnameTextfield,
-                                controllerNode: lastnameTextfieldNode,
-                                hintText: 'Last name',
-                                icon: Icons.person,
-                                textInputType: TextInputType.name,
-                                autofillHints: [AutofillHints.familyName],
+                              child: Container(
+                                margin: EdgeInsets.only(left: 6),
+                                child: SuaaGlobalTextfield(
+                                  controller: lastnameTextfield,
+                                  controllerNode: lastnameTextfieldNode,
+                                  hintText: 'Last name',
+                                  icon: Icons.person,
+                                  textInputType: TextInputType.name,
+                                  autofillHints: [AutofillHints.familyName],
+                                ),
                               ),
                             ),
                           ],
