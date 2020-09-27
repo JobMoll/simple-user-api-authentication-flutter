@@ -67,7 +67,7 @@ class SuaaGlobalTextfield extends StatelessWidget {
             color: accentOppositeColor,
           ),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.all(18),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         ),
       ),
     );
@@ -87,7 +87,7 @@ class SuaaGlobalButton extends StatelessWidget {
       onTap: functionOnTap,
       child: Container(
         margin: EdgeInsets.only(top: 12),
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 17, vertical: 14),
         decoration: BoxDecoration(
           color: accentColor,
           borderRadius: widgetsBorderRadius,

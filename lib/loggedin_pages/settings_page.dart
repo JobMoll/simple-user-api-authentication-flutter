@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_user_api_authentication/global_widgets.dart';
 import 'package:simple_user_api_authentication/loggedin_pages/settings_pages/change_user_details.dart';
+import 'package:simple_user_api_authentication/loggedin_pages/settings_pages/max_login_duration_page.dart';
 import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -67,7 +68,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         margin: EdgeInsets.only(top: 20),
                         child: GestureDetector(
                           onTap: () async {
-                            //  SimpleUserAPIAuthentication.userLogout();
                             Get.to(ChangeUserDetailsPage());
                           },
                           child: Row(
@@ -105,7 +105,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       margin: EdgeInsets.only(top: 20),
                       child: GestureDetector(
                         onTap: () async {
-                          //  SimpleUserAPIAuthentication.userLogout();
+                          Get.to(ManageUserMaxLoginDurationPage());
                         },
                         child: Row(
                           children: [

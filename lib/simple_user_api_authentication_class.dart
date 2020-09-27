@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
 import 'package:get/get.dart';
-import 'package:simple_user_api_authentication/global_widgets.dart';
 
 final dio = dioCalls.Dio(
   dioCalls.BaseOptions(
@@ -162,6 +161,35 @@ class SimpleUserAPIAuthentication {
         }
       } else {
         return requestAccessToken(changePassword(newPassword));
+      }
+    });
+  }
+
+  static maxLoginDurationChange(String newMaxLoginDuration) async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> requestData = {
+      'access_token': accessToken,
+      'new_max_login_duration': newMaxLoginDuration
+    };
+
+    dio
+        .post(
+            '/wp-json/simple-user-api-authentication/user-manage-max-login-duration',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+
+      if (response.statusCode == 200) {
+        if (responseData['status'] == 'success') {
+          SimpleUserAPIAuthentication.showSimpleMessage(responseData['title'],
+              responseData['message'], responseData['status'], 3);
+
+          userLogout();
+        }
+      } else {
+        return requestAccessToken(maxLoginDurationChange(newMaxLoginDuration));
       }
     });
   }
