@@ -130,9 +130,37 @@ class SimpleUserAPIAuthentication {
         }
 
         Map<String, dynamic> userDataJsonString = responseData['user_data'];
-        print(userDataJsonString);
+        print(jsonEncode(userDataJsonString));
       } else {
         return requestAccessToken(getUserData);
+      }
+    });
+  }
+
+  static changeUserData(String firstName, String lastName, String email) async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> requestData = {
+      'access_token': accessToken,
+      'new_first_name': firstName,
+      'new_last_name': lastName,
+      'new_user_email': email,
+    };
+
+    dio
+        .post('/wp-json/simple-user-api-authentication/change-user-data',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+
+      if (response.statusCode == 200) {
+        if (responseData['status'] == 'success') {
+          SimpleUserAPIAuthentication.showSimpleMessage(responseData['title'],
+              responseData['message'], responseData['status'], 3);
+        }
+      } else {
+        return requestAccessToken(changeUserData(firstName, lastName, email));
       }
     });
   }
@@ -166,7 +194,7 @@ class SimpleUserAPIAuthentication {
     });
   }
 
-  static maxLoginDurationChange(String newMaxLoginDuration) async {
+  static changeMaxLoginDuration(String newMaxLoginDuration) async {
     String accessToken =
         await storage.read(key: 'simple_user_api_authentication_access_token');
 
@@ -177,7 +205,7 @@ class SimpleUserAPIAuthentication {
 
     dio
         .post(
-            '/wp-json/simple-user-api-authentication/user-manage-max-login-duration',
+            '/wp-json/simple-user-api-authentication/user-change-max-login-duration',
             data: requestData)
         .then((response) async {
       var responseData = response.data;
@@ -190,7 +218,7 @@ class SimpleUserAPIAuthentication {
           userLogout();
         }
       } else {
-        return requestAccessToken(maxLoginDurationChange(newMaxLoginDuration));
+        return requestAccessToken(changeMaxLoginDuration(newMaxLoginDuration));
       }
     });
   }
@@ -302,5 +330,72 @@ class SimpleUserAPIAuthentication {
       isDismissible: true,
       duration: Duration(seconds: durationInSec),
     );
+  }
+}
+
+// https://app.quicktype.io/
+class MaxLoginDurationClass {
+  String status;
+  bool accessTokenIsValid;
+  String timeInputIntTextfield;
+  String currentTimeInputText;
+
+  MaxLoginDurationClass(
+      {this.status,
+      this.accessTokenIsValid,
+      this.timeInputIntTextfield,
+      this.currentTimeInputText});
+
+  MaxLoginDurationClass.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    accessTokenIsValid = json['access_token_is_valid'];
+    timeInputIntTextfield = json['timeInputIntTextfield'];
+    currentTimeInputText = json['currentTimeInputText'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['access_token_is_valid'] = this.accessTokenIsValid;
+    data['timeInputIntTextfield'] = this.timeInputIntTextfield;
+    data['currentTimeInputText'] = this.currentTimeInputText;
+    return data;
+  }
+}
+
+class GetUserDetailsClass {
+  int userId;
+  String userNicename;
+  String userFirstName;
+  String userLastName;
+  String userRegistered;
+  String userEmail;
+
+  GetUserDetailsClass(
+      {this.userId,
+      this.userNicename,
+      this.userFirstName,
+      this.userLastName,
+      this.userRegistered,
+      this.userEmail});
+
+  GetUserDetailsClass.fromJson(Map<String, dynamic> json) {
+    userId = json['user_id'];
+    userNicename = json['user_nicename'];
+    userFirstName = json['user_first_name'];
+    userLastName = json['user_last_name'];
+    userRegistered = json['user_registered'];
+    userEmail = json['user_email'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['user_id'] = this.userId;
+    data['user_nicename'] = this.userNicename;
+    data['user_first_name'] = this.userFirstName;
+    data['user_last_name'] = this.userLastName;
+    data['user_registered'] = this.userRegistered;
+    data['user_email'] = this.userEmail;
+    return data;
   }
 }

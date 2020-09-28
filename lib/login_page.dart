@@ -43,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // TODO wait for a solution from the Flutter team
                   AutofillGroup(
                     child: Column(
                       children: [

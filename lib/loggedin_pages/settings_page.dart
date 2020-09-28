@@ -110,7 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.lock_clock,
+                              Icons.access_time,
                               color: Colors.black,
                             ),
                             SizedBox(

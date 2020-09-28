@@ -60,8 +60,46 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
     return false;
   }
 
+  bool loadedGetUserDetails = false;
+
+  getUserDetails() async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> requestData = {
+      'access_token': accessToken,
+    };
+
+    dio
+        .post('/wp-json/simple-user-api-authentication/get-user-data',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+
+      if (response.statusCode == 200) {
+        if (responseData['status'] == 'success') {
+          GetUserDetailsClass getUserDetailsData =
+              GetUserDetailsClass.fromJson(responseData['user_data']);
+
+          setState(() {
+            firstnameTextfield.text = getUserDetailsData.userFirstName;
+            lastnameTextfield.text = getUserDetailsData.userLastName;
+
+            emailTextfield.text = getUserDetailsData.userEmail;
+
+            loadedGetUserDetails = true;
+          });
+        }
+      } else {
+        return SimpleUserAPIAuthentication.requestAccessToken(getUserDetails);
+      }
+    });
+  }
+
   @override
   void initState() {
+    getUserDetails();
+
     super.initState();
   }
 
@@ -86,8 +124,7 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
             child: Container(
               margin: EdgeInsets.only(top: 0, left: 12, right: 12),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(top: 25),
@@ -100,73 +137,86 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                             style: smallHeadingTextStyle,
                           ),
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                margin: EdgeInsets.only(right: 6),
-                                child: SuaaGlobalTextfield(
-                                  controller: firstnameTextfield,
-                                  controllerNode: firstnameTextfieldNode,
-                                  hintText: 'First name',
-                                  icon: Icons.person,
-                                  textInputType: TextInputType.name,
-                                  autofillHints: [AutofillHints.givenName],
-                                  functionOnEditingComplete: () {
-                                    FocusScope.of(context)
-                                        .requestFocus(lastnameTextfieldNode);
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                margin: EdgeInsets.only(left: 6),
-                                child: SuaaGlobalTextfield(
-                                  controller: lastnameTextfield,
-                                  controllerNode: lastnameTextfieldNode,
-                                  hintText: 'Last name',
-                                  icon: Icons.person,
-                                  textInputType: TextInputType.name,
-                                  autofillHints: [AutofillHints.familyName],
-                                  functionOnEditingComplete: () {
-                                    FocusScope.of(context)
-                                        .requestFocus(emailTextfieldNode);
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SuaaGlobalTextfield(
-                          controller: emailTextfield,
-                          controllerNode: emailTextfieldNode,
-                          hintText: 'Email',
-                          icon: Icons.mail,
-                          textInputType: TextInputType.emailAddress,
-                          autofillHints: [AutofillHints.email],
-                        ),
+                        loadedGetUserDetails
+                            ? Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          margin: EdgeInsets.only(right: 6),
+                                          child: SuaaGlobalTextfield(
+                                            controller: firstnameTextfield,
+                                            controllerNode:
+                                                firstnameTextfieldNode,
+                                            hintText: 'First name',
+                                            icon: Icons.person,
+                                            textInputType: TextInputType.name,
+                                            autofillHints: [
+                                              AutofillHints.givenName
+                                            ],
+                                            functionOnEditingComplete: () {
+                                              FocusScope.of(context)
+                                                  .requestFocus(
+                                                      lastnameTextfieldNode);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          margin: EdgeInsets.only(left: 6),
+                                          child: SuaaGlobalTextfield(
+                                            controller: lastnameTextfield,
+                                            controllerNode:
+                                                lastnameTextfieldNode,
+                                            hintText: 'Last name',
+                                            icon: Icons.person,
+                                            textInputType: TextInputType.name,
+                                            autofillHints: [
+                                              AutofillHints.familyName
+                                            ],
+                                            functionOnEditingComplete: () {
+                                              FocusScope.of(context)
+                                                  .requestFocus(
+                                                      emailTextfieldNode);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SuaaGlobalTextfield(
+                                    controller: emailTextfield,
+                                    controllerNode: emailTextfieldNode,
+                                    hintText: 'Email',
+                                    icon: Icons.mail,
+                                    textInputType: TextInputType.emailAddress,
+                                    autofillHints: [AutofillHints.email],
+                                  ),
+                                ],
+                              )
+                            : SuaaProgressIndicator(),
                         SuaaGlobalButton(
                           text: 'Change personal data',
                           functionOnTap: () {
-                            if (passwordTextfield.text != '' &&
-                                passwordConfirmTextfield.text != '' &&
-                                passwordConfirmTextfield.text ==
-                                    passwordTextfield.text) {
+                            if (firstnameTextfield.text != '' &&
+                                lastnameTextfield.text != '' &&
+                                emailTextfield.text != '') {
                               SimpleUserAPIAuthentication.showSimpleMessage(
-                                  'Changing your password',
-                                  'One moment while we change your password...',
+                                  'Changing your personal details',
+                                  'One moment while we change your personal details...',
                                   'info',
                                   100);
 
-// TODO change user info call here
-                              // SimpleUserAPIAuthentication.requestRefreshToken(
-                              //     passwordConfirmTextfield.text,
-                              //     passwordTextfield.text);
+                              SimpleUserAPIAuthentication.changeUserData(
+                                  firstnameTextfield.text,
+                                  lastnameTextfield.text,
+                                  emailTextfield.text);
                             } else {
                               SimpleUserAPIAuthentication.showSimpleMessage(
-                                  'The passwords are not the same',
-                                  'The passwords you filled in are not the same...',
+                                  "One field isn't filled in",
+                                  'You have to fill in all the required fields...',
                                   'error',
                                   3);
                             }

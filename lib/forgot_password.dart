@@ -62,7 +62,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     } else {
                       SimpleUserAPIAuthentication.showSimpleMessage(
                           "You can't leave this field empty",
-                          'You forgot to fill in  the field...',
+                          'You forgot to fill in your username or email...',
                           'error',
                           3);
                     }

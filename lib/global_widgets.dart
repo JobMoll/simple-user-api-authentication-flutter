@@ -218,3 +218,19 @@ class SuaaGlobalNavigationBarItem extends StatelessWidget {
     );
   }
 }
+
+class SuaaProgressIndicator extends StatelessWidget {
+  const SuaaProgressIndicator({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 12),
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+      ),
+    );
+  }
+}

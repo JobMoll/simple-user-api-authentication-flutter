@@ -23,8 +23,46 @@ class _ManageUserMaxLoginDurationPageState
     'Months'
   ];
 
+  bool loadedGetMaxLoginDuration = false;
+
+  getMaxLoginDuration() async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> requestData = {
+      'access_token': accessToken,
+    };
+
+    dio
+        .post(
+            '/wp-json/simple-user-api-authentication/user-get-max-login-duration',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+
+      if (response.statusCode == 200) {
+        if (responseData['status'] == 'success') {
+          MaxLoginDurationClass maxLoginDurationData =
+              MaxLoginDurationClass.fromJson(responseData);
+
+          setState(() {
+            timeInputIntTextfield.text =
+                maxLoginDurationData.timeInputIntTextfield;
+            currentTimeInputText = maxLoginDurationData.currentTimeInputText;
+            loadedGetMaxLoginDuration = true;
+          });
+        }
+      } else {
+        return SimpleUserAPIAuthentication.requestAccessToken(
+            getMaxLoginDuration);
+      }
+    });
+  }
+
   @override
   void initState() {
+    getMaxLoginDuration();
+
     super.initState();
   }
 
@@ -75,47 +113,54 @@ class _ManageUserMaxLoginDurationPageState
                             ],
                           ),
                         ),
-                        SuaaGlobalTextfield(
-                          controller: timeInputIntTextfield,
-                          controllerNode: timeInputIntTextfieldNode,
-                          hintText: '7',
-                          icon: Icons.lock_clock,
-                          textInputType: TextInputType.number,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 12),
-                          child: DropdownButtonHideUnderline(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: accentColor,
-                                borderRadius: widgetsBorderRadius,
-                              ),
-                              child: ButtonTheme(
-                                alignedDropdown: true,
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  dropdownColor: accentColor,
-                                  focusColor: accentColor,
-                                  value: currentTimeInputText,
-                                  style: accentElementsTextStyle,
-                                  items:
-                                      currentTimeInputList.map((dynamic value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (newCurrentTimeInputText) {
-                                    setState(() {
-                                      currentTimeInputText =
-                                          newCurrentTimeInputText;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        loadedGetMaxLoginDuration
+                            ? Column(
+                                children: [
+                                  SuaaGlobalTextfield(
+                                    controller: timeInputIntTextfield,
+                                    controllerNode: timeInputIntTextfieldNode,
+                                    hintText: '7',
+                                    icon: Icons.access_time,
+                                    textInputType: TextInputType.number,
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 12),
+                                    child: DropdownButtonHideUnderline(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: accentColor,
+                                          borderRadius: widgetsBorderRadius,
+                                        ),
+                                        child: ButtonTheme(
+                                          alignedDropdown: true,
+                                          child: DropdownButton<String>(
+                                            isExpanded: true,
+                                            dropdownColor: accentColor,
+                                            focusColor: accentColor,
+                                            value: currentTimeInputText,
+                                            style: accentElementsTextStyle,
+                                            items: currentTimeInputList
+                                                .map((dynamic value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged:
+                                                (newCurrentTimeInputText) {
+                                              setState(() {
+                                                currentTimeInputText =
+                                                    newCurrentTimeInputText;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : SuaaProgressIndicator(),
                         SuaaGlobalButton(
                           text: 'Change max login duration',
                           functionOnTap: () {
@@ -133,11 +178,11 @@ class _ManageUserMaxLoginDurationPageState
                                   currentTimeInputText.toLowerCase();
 
                               SimpleUserAPIAuthentication
-                                  .maxLoginDurationChange(fullTimeInputText);
+                                  .changeMaxLoginDuration(fullTimeInputText);
                             } else {
                               SimpleUserAPIAuthentication.showSimpleMessage(
-                                  'The passwords are not the same',
-                                  'The passwords you filled in are not the same...',
+                                  'You forgot to fill in a field',
+                                  'You have to fill in a number in the field...',
                                   'error',
                                   3);
                             }
