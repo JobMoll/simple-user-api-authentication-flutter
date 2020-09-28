@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 
 final dio = dioCalls.Dio(
   dioCalls.BaseOptions(
@@ -267,12 +268,15 @@ class SimpleUserAPIAuthentication {
     if (messageStatus == 'info') {
       icon = Icons.info_outline;
       color = Colors.blue;
+      HapticFeedback.selectionClick();
     } else if (messageStatus == 'error') {
       icon = Icons.error_outline;
       color = Colors.red;
+      HapticFeedback.heavyImpact();
     } else if (messageStatus == 'success') {
       icon = Icons.check_circle_outline;
       color = Colors.green;
+      HapticFeedback.lightImpact();
     }
 
     if (Get.isSnackbarOpen) {
