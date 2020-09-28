@@ -289,6 +289,33 @@ class SimpleUserAPIAuthentication {
     });
   }
 
+  static Future<MaxLoginDurationClass> getMaxLoginDuration() async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> requestData = {
+      'access_token': accessToken,
+    };
+
+    var response = await dio.post(
+        '/wp-json/simple-user-api-authentication/user-get-max-login-duration',
+        data: requestData);
+
+    var responseData = response.data;
+
+    if (response.statusCode == 200) {
+      if (responseData['status'] == 'success') {
+        MaxLoginDurationClass maxLoginDurationData =
+            MaxLoginDurationClass.fromJson(responseData);
+
+        return maxLoginDurationData;
+      }
+    } else {
+      return SimpleUserAPIAuthentication.requestAccessToken(
+          getMaxLoginDuration);
+    }
+  }
+
   static showSimpleMessage(
       String title, String message, String messageStatus, int durationInSec) {
     IconData icon = Icons.info_outline;
