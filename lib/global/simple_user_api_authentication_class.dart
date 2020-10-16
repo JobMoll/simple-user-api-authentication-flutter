@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart' as dioCalls;
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
@@ -7,14 +8,24 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart'
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 
-final dio = dioCalls.Dio(
+String baseDomainUrl = 'https://usercookieauthenticationapi.mollupbuilding.nl';
+
+final dioSuaa = dioCalls.Dio(
   dioCalls.BaseOptions(
-    baseUrl: 'https://usercookieauthenticationapi.mollupbuilding.nl',
-    followRedirects: false,
-    validateStatus: (status) {
-      return status < 500;
-    },
-  ),
+      baseUrl: baseDomainUrl,
+      followRedirects: false,
+      validateStatus: (status) {
+        return status < 500;
+      }),
+);
+
+final dioSuaaRefreshAccessToken = dioCalls.Dio(
+  dioCalls.BaseOptions(
+      baseUrl: baseDomainUrl,
+      followRedirects: false,
+      validateStatus: (status) {
+        return status < 500;
+      }),
 );
 
 final storage = new secureStorage.FlutterSecureStorage();
@@ -26,7 +37,7 @@ class SimpleUserAPIAuthentication {
       'password': password
     };
 
-    dio
+    dioSuaa
         .post('/wp-json/simple-user-api-authentication/generate-refresh-token',
             data: loginData)
         .then((response) async {
@@ -34,7 +45,7 @@ class SimpleUserAPIAuthentication {
       if (response.statusCode == 200) {
         await storage.write(
             key: 'simple_user_api_authentication_refresh_token',
-            value: responseData['refresh_token']);
+            value: responseData['new_refresh_token']);
 
         await storage.write(
             key: 'simple_user_api_authentication_user_id',
@@ -51,37 +62,6 @@ class SimpleUserAPIAuthentication {
     });
   }
 
-  static requestAccessToken(VoidCallback name) async {
-    String refreshToken =
-        await storage.read(key: 'simple_user_api_authentication_refresh_token');
-
-    Map<String, String> refreshTokenData = {'refresh_token': refreshToken};
-
-    dio
-        .post('/wp-json/simple-user-api-authentication/generate-access-token',
-            data: refreshTokenData)
-        .then((response) async {
-      var responseData = response.data;
-      if (response.statusCode == 200) {
-        if (responseData['access_token'] != 'failed') {
-          await storage.write(
-              key: 'simple_user_api_authentication_access_token',
-              value: responseData['access_token']);
-
-          if (name == getUserData) {
-            getUserData(true);
-          } else {
-            name();
-          }
-        } else {
-          return responseData['message'];
-        }
-      } else {
-        userLogout();
-      }
-    });
-  }
-
   static checkForValidRefreshToken() async {
     String refreshToken =
         await storage.read(key: 'simple_user_api_authentication_refresh_token');
@@ -89,7 +69,7 @@ class SimpleUserAPIAuthentication {
     if (refreshToken != '' && refreshToken != null) {
       Map<String, String> refreshTokenData = {'refresh_token': refreshToken};
 
-      dio
+      dioSuaa
           .post(
         '/wp-json/simple-user-api-authentication/generate-access-token',
         data: json.encode(refreshTokenData),
@@ -99,7 +79,73 @@ class SimpleUserAPIAuthentication {
         if (response.statusCode == 200) {
           storage.write(
               key: 'simple_user_api_authentication_access_token',
-              value: responseData['access_token']);
+              value: responseData['new_access_token']);
+
+          dioSuaa.interceptors.add(
+            InterceptorsWrapper(
+              onRequest: (RequestOptions options) {
+                print('send request：${options.baseUrl}${options.path}');
+              },
+              onResponse: (Response response) async {
+                print(response.statusCode);
+                if (response.statusCode == 401) {
+                  RequestOptions options = response.request;
+                  // // If the token has been updated, repeat directly.
+                  // if (csrfToken != options.headers["csrfToken"]) {
+                  //   options.headers["csrfToken"] = csrfToken;
+                  //   //repeat
+                  //   return dioSuaa.request(options.path, options: options);
+                  // }
+                  // // update token and repeat
+                  // // Lock to block the incoming request until the token updated
+                  dioSuaa.lock();
+                  dioSuaa.interceptors.responseLock.lock();
+                  dioSuaa.interceptors.errorLock.lock();
+
+                  String refreshToken = await storage.read(
+                      key: 'simple_user_api_authentication_refresh_token');
+                  Map<String, String> refreshTokenData = {
+                    'refresh_token': refreshToken
+                  };
+
+                  return dioSuaaRefreshAccessToken
+                      .post(
+                          '/wp-json/simple-user-api-authentication/generate-access-token',
+                          data: refreshTokenData)
+                      .then((response) {
+                    var responseData = response.data;
+                    if (response.statusCode == 200 &&
+                        responseData['status'] != 'error') {
+                      storage.write(
+                          key: 'simple_user_api_authentication_access_token',
+                          value: responseData['new_access_token']);
+
+                      options.data["access_token"] =
+                          responseData['new_access_token'];
+                    } else {
+                      // refresh token is not valid
+                      print('Refresh token is not valid');
+                      SimpleUserAPIAuthentication.userLogout();
+                    }
+                  }).whenComplete(() {
+                    dioSuaa.unlock();
+                    dioSuaa.interceptors.responseLock.unlock();
+                    dioSuaa.interceptors.errorLock.unlock();
+                  }).then((e) {
+                    //repeat
+                    return dioSuaa.request(options.path, options: options);
+                  });
+                }
+              },
+              onError: (DioError error) async {
+                //print(error);
+
+                // Assume 401 stands for token expired
+
+                return error;
+              },
+            ),
+          );
 
           Get.offNamed("/informationPage");
         } else {
@@ -117,7 +163,7 @@ class SimpleUserAPIAuthentication {
 
     Map<String, String> accessTokenData = {'access_token': accessToken};
 
-    dio
+    dioSuaa
         .post('/wp-json/simple-user-api-authentication/get-user-data',
             data: accessTokenData)
         .then((response) async {
@@ -131,8 +177,6 @@ class SimpleUserAPIAuthentication {
 
         Map<String, dynamic> userDataJsonString = responseData['user_data'];
         print(jsonEncode(userDataJsonString));
-      } else {
-        return requestAccessToken(getUserData);
       }
     });
   }
@@ -148,7 +192,7 @@ class SimpleUserAPIAuthentication {
       'new_user_email': email,
     };
 
-    dio
+    dioSuaa
         .post('/wp-json/simple-user-api-authentication/change-user-data',
             data: requestData)
         .then((response) async {
@@ -159,8 +203,6 @@ class SimpleUserAPIAuthentication {
           SimpleUserAPIAuthentication.showSimpleMessage(responseData['title'],
               responseData['message'], responseData['status'], 3);
         }
-      } else {
-        return requestAccessToken(changeUserData(firstName, lastName, email));
       }
     });
   }
@@ -174,7 +216,7 @@ class SimpleUserAPIAuthentication {
       'new_password': newPassword
     };
 
-    dio
+    dioSuaa
         .post('/wp-json/simple-user-api-authentication/change-password',
             data: requestData)
         .then((response) async {
@@ -188,8 +230,6 @@ class SimpleUserAPIAuthentication {
         if (responseData['status'] == 'success') {
           userLogout();
         }
-      } else {
-        return requestAccessToken(changePassword(newPassword));
       }
     });
   }
@@ -203,7 +243,7 @@ class SimpleUserAPIAuthentication {
       'new_max_login_duration': newMaxLoginDuration
     };
 
-    dio
+    dioSuaa
         .post(
             '/wp-json/simple-user-api-authentication/user-change-max-login-duration',
             data: requestData)
@@ -217,8 +257,6 @@ class SimpleUserAPIAuthentication {
 
           userLogout();
         }
-      } else {
-        return requestAccessToken(changeMaxLoginDuration(newMaxLoginDuration));
       }
     });
   }
@@ -230,7 +268,7 @@ class SimpleUserAPIAuthentication {
     if (userID != null && userID != '') {
       Map<String, String> requestData = {'user_id': userID};
 
-      dio
+      dioSuaa
           .post('/wp-json/simple-user-api-authentication/delete-user-tokens',
               data: requestData)
           .then((response) async {
@@ -250,8 +288,6 @@ class SimpleUserAPIAuthentication {
                 'success',
                 3);
           }
-        } else {
-          requestAccessToken(userLogout);
         }
       });
     } else {
@@ -262,7 +298,7 @@ class SimpleUserAPIAuthentication {
   static forgotPassword(String usernameOrEmail) async {
     Map<String, String> requestData = {'username_or_email': usernameOrEmail};
 
-    dio
+    dioSuaa
         .post('/wp-json/simple-user-api-authentication/forgot-password',
             data: requestData)
         .then((response) async {
@@ -277,7 +313,7 @@ class SimpleUserAPIAuthentication {
   static registerNewUser(String username, String email) async {
     Map<String, String> requestData = {'username': username, 'email': email};
 
-    dio
+    dioSuaa
         .post('/wp-json/simple-user-api-authentication/register-a-new-user',
             data: requestData)
         .then((response) async {
@@ -297,7 +333,7 @@ class SimpleUserAPIAuthentication {
       'access_token': accessToken,
     };
 
-    var response = await dio.post(
+    var response = await dioSuaa.post(
         '/wp-json/simple-user-api-authentication/user-get-max-login-duration',
         data: requestData);
 
@@ -310,10 +346,7 @@ class SimpleUserAPIAuthentication {
 
         return maxLoginDurationData;
       }
-    } else {
-      return SimpleUserAPIAuthentication.requestAccessToken(
-          getMaxLoginDuration);
-    }
+    } else {}
   }
 
   static showSimpleMessage(

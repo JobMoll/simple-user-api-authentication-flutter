@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:simple_user_api_authentication/global_widgets.dart';
-import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
+import 'package:simple_user_api_authentication/global/global_widgets.dart';
+import 'package:simple_user_api_authentication/global/simple_user_api_authentication_class.dart';
 
 class ManageUserMaxLoginDurationPage extends StatefulWidget {
   ManageUserMaxLoginDurationPage({Key key}) : super(key: key);
@@ -33,7 +33,7 @@ class _ManageUserMaxLoginDurationPageState
       'access_token': accessToken,
     };
 
-    dio
+    dioSuaa
         .post(
             '/wp-json/simple-user-api-authentication/user-get-max-login-duration',
             data: requestData)
@@ -52,10 +52,7 @@ class _ManageUserMaxLoginDurationPageState
             loadedGetMaxLoginDuration = true;
           });
         }
-      } else {
-        return SimpleUserAPIAuthentication.requestAccessToken(
-            getMaxLoginDuration);
-      }
+      } else {}
     });
   }
 

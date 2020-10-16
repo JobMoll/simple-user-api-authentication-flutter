@@ -1,6 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_user_api_authentication/global_widgets.dart';
-import 'package:simple_user_api_authentication/simple_user_api_authentication_class.dart';
+import 'package:simple_user_api_authentication/global/global_widgets.dart';
+import 'package:simple_user_api_authentication/global/simple_user_api_authentication_class.dart';
 
 class InformationPage extends StatefulWidget {
   InformationPage({Key key}) : super(key: key);
@@ -12,6 +13,7 @@ class _InformationPageState extends State<InformationPage> {
   @override
   void initState() {
     super.initState();
+
     SimpleUserAPIAuthentication.getUserData(true);
   }
 
