@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 
 String baseDomainUrl = 'https://usercookieauthenticationapi.mollupbuilding.nl';
 
+final dioSuaaCancelToken = CancelToken();
 final dioSuaa = dioCalls.Dio(
   dioCalls.BaseOptions(
       baseUrl: baseDomainUrl,
@@ -54,6 +55,8 @@ class SimpleUserAPIAuthentication {
         SimpleUserAPIAuthentication.showSimpleMessage('Your login is correct!',
             'You are successfully loggedin', 'success', 3);
 
+        requestNewAccessTokenInterceptor();
+
         Get.offNamed('/informationPage');
       } else {
         showSimpleMessage(
@@ -81,71 +84,7 @@ class SimpleUserAPIAuthentication {
               key: 'simple_user_api_authentication_access_token',
               value: responseData['new_access_token']);
 
-          dioSuaa.interceptors.add(
-            InterceptorsWrapper(
-              onRequest: (RequestOptions options) {
-                print('send request：${options.baseUrl}${options.path}');
-              },
-              onResponse: (Response response) async {
-                print(response.statusCode);
-                if (response.statusCode == 401) {
-                  RequestOptions options = response.request;
-                  // // If the token has been updated, repeat directly.
-                  // if (csrfToken != options.headers["csrfToken"]) {
-                  //   options.headers["csrfToken"] = csrfToken;
-                  //   //repeat
-                  //   return dioSuaa.request(options.path, options: options);
-                  // }
-                  // // update token and repeat
-                  // // Lock to block the incoming request until the token updated
-                  dioSuaa.lock();
-                  dioSuaa.interceptors.responseLock.lock();
-                  dioSuaa.interceptors.errorLock.lock();
-
-                  String refreshToken = await storage.read(
-                      key: 'simple_user_api_authentication_refresh_token');
-                  Map<String, String> refreshTokenData = {
-                    'refresh_token': refreshToken
-                  };
-
-                  return dioSuaaRefreshAccessToken
-                      .post(
-                          '/wp-json/simple-user-api-authentication/generate-access-token',
-                          data: refreshTokenData)
-                      .then((response) {
-                    var responseData = response.data;
-                    if (response.statusCode == 200 &&
-                        responseData['status'] != 'error') {
-                      storage.write(
-                          key: 'simple_user_api_authentication_access_token',
-                          value: responseData['new_access_token']);
-
-                      options.data["access_token"] =
-                          responseData['new_access_token'];
-                    } else {
-                      // refresh token is not valid
-                      print('Refresh token is not valid');
-                      SimpleUserAPIAuthentication.userLogout();
-                    }
-                  }).whenComplete(() {
-                    dioSuaa.unlock();
-                    dioSuaa.interceptors.responseLock.unlock();
-                    dioSuaa.interceptors.errorLock.unlock();
-                  }).then((e) {
-                    //repeat
-                    return dioSuaa.request(options.path, options: options);
-                  });
-                }
-              },
-              onError: (DioError error) async {
-                //print(error);
-
-                // Assume 401 stands for token expired
-
-                return error;
-              },
-            ),
-          );
+          requestNewAccessTokenInterceptor();
 
           Get.offNamed("/informationPage");
         } else {
@@ -153,7 +92,7 @@ class SimpleUserAPIAuthentication {
         }
       });
     } else {
-      userLogout(true);
+      userLogout();
     }
   }
 
@@ -165,7 +104,7 @@ class SimpleUserAPIAuthentication {
 
     dioSuaa
         .post('/wp-json/simple-user-api-authentication/get-user-data',
-            data: accessTokenData)
+            data: accessTokenData, cancelToken: dioSuaaCancelToken)
         .then((response) async {
       var responseData = response.data;
 
@@ -176,7 +115,7 @@ class SimpleUserAPIAuthentication {
         }
 
         Map<String, dynamic> userDataJsonString = responseData['user_data'];
-        print(jsonEncode(userDataJsonString));
+        print(userDataJsonString);
       }
     });
   }
@@ -261,7 +200,7 @@ class SimpleUserAPIAuthentication {
     });
   }
 
-  static userLogout([bool initialLoad]) async {
+  static userLogout([bool loadWithMessage]) async {
     String userID =
         await storage.read(key: 'simple_user_api_authentication_user_id');
 
@@ -272,6 +211,7 @@ class SimpleUserAPIAuthentication {
           .post('/wp-json/simple-user-api-authentication/delete-user-tokens',
               data: requestData)
           .then((response) async {
+        print(response.data);
         if (response.statusCode == 200) {
           await storage.delete(
               key: 'simple_user_api_authentication_refresh_token');
@@ -279,9 +219,11 @@ class SimpleUserAPIAuthentication {
               key: 'simple_user_api_authentication_access_token');
           await storage.delete(key: 'simple_user_api_authentication_user_id');
 
+          print('deleted user tokens');
+
           Get.offNamed("/loginPage");
 
-          if (initialLoad != true) {
+          if (loadWithMessage == true) {
             SimpleUserAPIAuthentication.showSimpleMessage(
                 'Successfully logged out',
                 'You are succesfully logged out!',
@@ -347,6 +289,78 @@ class SimpleUserAPIAuthentication {
         return maxLoginDurationData;
       }
     } else {}
+  }
+
+  static requestNewAccessTokenInterceptor() {
+    dioSuaa.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (RequestOptions options) {
+          print('send request：${options.baseUrl}${options.path}');
+        },
+        onResponse: (Response response) async {
+          print(response.statusCode);
+          if (response.statusCode == 401) {
+            RequestOptions options = response.request;
+
+            dioSuaa.lock();
+            dioSuaa.interceptors.responseLock.lock();
+            dioSuaa.interceptors.errorLock.lock();
+
+            String refreshToken = await storage.read(
+                key: 'simple_user_api_authentication_refresh_token');
+            Map<String, String> refreshTokenData = {
+              'refresh_token': refreshToken
+            };
+
+            return dioSuaaRefreshAccessToken
+                .post(
+                    '/wp-json/simple-user-api-authentication/generate-access-token',
+                    data: refreshTokenData)
+                .then((response) {
+              print('trying to get new access token');
+              print(response.data);
+              var responseData = response.data;
+              if (response.statusCode == 200 &&
+                  responseData['status'] != 'error') {
+                storage.write(
+                    key: 'simple_user_api_authentication_access_token',
+                    value: responseData['new_access_token']);
+
+                options.data["access_token"] = responseData['new_access_token'];
+              } else {
+                // refresh token is not valid
+                print('Refresh token is not valid');
+
+                dioSuaaCancelToken.cancel();
+                dioSuaa.clear();
+
+                dioSuaaRefreshAccessToken.clear();
+
+                dioSuaa.unlock();
+                dioSuaa.interceptors.responseLock.unlock();
+                dioSuaa.interceptors.errorLock.unlock();
+
+                SimpleUserAPIAuthentication.userLogout();
+              }
+            }).whenComplete(() {
+              dioSuaa.unlock();
+              dioSuaa.interceptors.responseLock.unlock();
+              dioSuaa.interceptors.errorLock.unlock();
+            }).then((e) {
+              //repeat
+              return dioSuaa.request(options.path, options: options);
+            });
+          }
+        },
+        onError: (DioError error) async {
+          //print(error);
+
+          // Assume 401 stands for token expired
+
+          return error;
+        },
+      ),
+    );
   }
 
   static showSimpleMessage(

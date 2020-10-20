@@ -142,7 +142,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           'One moment while we log you out...',
                           'info',
                           100);
-                      SimpleUserAPIAuthentication.userLogout();
+                      SimpleUserAPIAuthentication.userLogout(true);
                     },
                     child: Row(
                       children: [
