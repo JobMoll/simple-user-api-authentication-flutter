@@ -14,6 +14,135 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool lockAutomaticallySwitch = false;
   bool useBiometric = false;
+  int appPasscodeLength = 5;
+
+  TextEditingController appPasscode = TextEditingController();
+  TextEditingController appPasscodeCheck = TextEditingController();
+
+  FocusNode appPasscodeNode = FocusNode();
+  FocusNode appPasscodeCheckNode = FocusNode();
+
+  Future setPasswordPopup(
+      {IconData icon,
+      BuildContext context,
+      String title,
+      String description,
+      Function confirmFunction,
+      bool isDeleteButton}) {
+    return showGeneralDialog(
+      barrierLabel: title,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.6),
+      transitionDuration: Duration(milliseconds: 500),
+      context: context,
+      pageBuilder: (_, __, ___) {
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Material(
+              type: MaterialType.transparency,
+              child: Container(
+                height: 600,
+                margin: EdgeInsets.symmetric(horizontal: 12),
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: mainColor,
+                  borderRadius: widgetsBorderRadius,
+                ),
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    Icon(
+                      icon,
+                      size: 40,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 10,
+                      ),
+                      child: Text(
+                        title,
+                        style: smallHeadingTextStyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 6,
+                      ),
+                      child: Text(
+                        description,
+                        style: bodyTextStyle,
+                        textAlign: TextAlign.center,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // passcode input here
+                    SuaaGlobalTextfield(
+                      controller: appPasscode,
+                      controllerNode: appPasscodeNode,
+                      hintText:
+                          appPasscodeLength.toString() + ' Digit passcode',
+                      icon: Icons.lock_open,
+                      obscureText: true,
+                      maxCharacterInput: appPasscodeLength,
+                      textInputType: TextInputType.number,
+                      functionOnEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(appPasscodeCheckNode);
+                      },
+                    ),
+                    SuaaGlobalTextfield(
+                      controller: appPasscodeCheck,
+                      controllerNode: appPasscodeCheckNode,
+                      hintText: 'Confirm ' +
+                          appPasscodeLength.toString() +
+                          ' digit passcode',
+                      icon: Icons.lock_open,
+                      obscureText: true,
+                      maxCharacterInput: appPasscodeLength,
+                      textInputType: TextInputType.number,
+                    ),
+
+                    SuaaGlobalButton(
+                      text: 'Confirm',
+                      functionOnTap: confirmFunction,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 12,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.close(1);
+                        },
+                        child: Text(
+                          'Cancel',
+                          style: bodyTextStyle,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (_, anim, __, child) {
+        return SlideTransition(
+          position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim),
+          child: child,
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -148,12 +277,66 @@ class _SettingsPageState extends State<SettingsPage> {
                           SuaaGlobalSwitch(
                             varName: lockAutomaticallySwitch,
                             varFunction: (newValue) {
-                              setState(() {
-                                if (newValue == false) {
+                              print(newValue);
+                              if (newValue == false) {
+                                //  removePasswordPopup();
+                                setState(() {
                                   useBiometric = newValue;
-                                }
-                                lockAutomaticallySwitch = newValue;
-                              });
+                                  lockAutomaticallySwitch = newValue;
+                                });
+                              }
+
+                              if (newValue == true) {
+                                setPasswordPopup(
+                                  icon: Icons.lock,
+                                  context: context,
+                                  title: 'Lock automatically',
+                                  description:
+                                      'When you close and reopen the app you have to fill in a password to get access to the data.',
+                                  confirmFunction: () {
+                                    if (appPasscode.text.isNotEmpty &&
+                                        appPasscodeCheck.text.isNotEmpty) {
+                                      if (appPasscode.text.length ==
+                                              appPasscodeLength &&
+                                          appPasscodeCheck.text.length ==
+                                              appPasscodeLength) {
+                                        if (appPasscode.text ==
+                                            appPasscodeCheck.text) {
+                                          setState(() {
+                                            appPasscode.text = '';
+                                            appPasscodeCheck.text = '';
+                                            Get.close(1);
+                                            lockAutomaticallySwitch = newValue;
+                                          });
+                                        } else {
+                                          SimpleUserAPIAuthentication
+                                              .showSimpleMessage(
+                                                  "App passcode do not match",
+                                                  'The app passcodes you filled in have to be the same...',
+                                                  'error',
+                                                  3);
+                                        }
+                                      } else {
+                                        SimpleUserAPIAuthentication
+                                            .showSimpleMessage(
+                                                "App passcode wrong length",
+                                                'App passcode should be ' +
+                                                    appPasscodeLength
+                                                        .toString() +
+                                                    ' numbers long...',
+                                                'error',
+                                                3);
+                                      }
+                                    } else {
+                                      SimpleUserAPIAuthentication.showSimpleMessage(
+                                          "App passcode field(s) empty",
+                                          'You forgot to fill in one of the app passcode fields...',
+                                          'error',
+                                          3);
+                                    }
+                                  },
+                                );
+                              }
                             },
                           ),
                         ],

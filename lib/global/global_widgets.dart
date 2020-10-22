@@ -25,6 +25,7 @@ class SuaaGlobalTextfield extends StatelessWidget {
     this.autofillHints,
     this.autoCorrect,
     this.obscureText,
+    this.maxCharacterInput,
     this.functionOnEditingComplete,
     this.functionOnChange,
   }) : super(key: key);
@@ -36,6 +37,7 @@ class SuaaGlobalTextfield extends StatelessWidget {
   final Iterable<String> autofillHints;
   final bool autoCorrect;
   final bool obscureText;
+  final int maxCharacterInput;
   final IconData icon;
   final Function functionOnEditingComplete;
   final Function functionOnChange;
@@ -56,10 +58,15 @@ class SuaaGlobalTextfield extends StatelessWidget {
         style: accentElementsTextStyle,
         autocorrect: autoCorrect ?? false,
         obscureText: obscureText ?? false,
+        maxLength: maxCharacterInput ?? null,
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(maxCharacterInput ?? null),
+        ],
         cursorColor: accentOppositeColor,
         onEditingComplete: functionOnEditingComplete,
         onChanged: functionOnChange,
         decoration: InputDecoration(
+          counterText: '',
           hintStyle: accentElementsTextStyle.copyWith(
               color: accentOppositeColor.withOpacity(0.65)),
           hintText: hintText,
