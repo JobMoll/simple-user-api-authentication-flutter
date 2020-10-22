@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 Color mainColor = Colors.white; // for the background etc
@@ -230,6 +231,36 @@ class SuaaProgressIndicator extends StatelessWidget {
       margin: EdgeInsets.only(top: 12),
       child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+      ),
+    );
+  }
+}
+
+class SuaaGlobalSwitch extends StatelessWidget {
+  const SuaaGlobalSwitch({
+    Key key,
+    @required this.varName,
+    @required this.varFunction,
+    this.disabledSwitch,
+  }) : super(key: key);
+
+  final bool varName;
+  final Function varFunction;
+  final bool disabledSwitch;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 24,
+      child: Switch(
+        value: varName,
+        onChanged: disabledSwitch ?? true
+            ? varFunction
+            : (value) {
+                HapticFeedback.heavyImpact();
+              },
+        activeTrackColor: accentColor.withOpacity(0.7),
+        activeColor: accentColor,
       ),
     );
   }

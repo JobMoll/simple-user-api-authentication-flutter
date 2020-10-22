@@ -12,6 +12,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  bool lockAutomaticallySwitch = false;
+  bool useBiometric = false;
+
   @override
   void initState() {
     super.initState();
@@ -61,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       Container(
                         child: Text(
                           'My account',
-                          style: TextStyle(fontSize: 18),
+                          style: bodyTextStyle.copyWith(fontSize: 18),
                         ),
                       ),
                       Container(
@@ -81,8 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               Text(
                                 'Personal details',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 17),
+                                style: bodyTextStyle,
                               ),
                             ],
                           ),
@@ -98,7 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Container(
                       child: Text(
                         'Safety',
-                        style: TextStyle(fontSize: 18),
+                        style: bodyTextStyle.copyWith(fontSize: 18),
                       ),
                     ),
                     // manage login duration
@@ -119,36 +121,75 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             Text(
                               'Manage login duration',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 17),
+                              style: bodyTextStyle,
                             ),
                           ],
                         ),
                       ),
                     ),
                     // app passcode
+
                     Container(
                       margin: EdgeInsets.only(top: 20),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Get.to(ManageUserMaxLoginDurationPage());
-                        },
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.code,
-                              color: Colors.black,
-                            ),
-                            SizedBox(
-                              width: 25,
-                            ),
-                            Text(
-                              'App passcode',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 17),
-                            ),
-                          ],
-                        ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 25,
+                          ),
+                          Text(
+                            'Lock automatically',
+                            style: bodyTextStyle,
+                          ),
+                          Spacer(),
+                          SuaaGlobalSwitch(
+                            varName: lockAutomaticallySwitch,
+                            varFunction: (newValue) {
+                              setState(() {
+                                if (newValue == false) {
+                                  useBiometric = newValue;
+                                }
+                                lockAutomaticallySwitch = newValue;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    // use biometric
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.fingerprint,
+                            color: lockAutomaticallySwitch
+                                ? Colors.black
+                                : Colors.black54,
+                          ),
+                          SizedBox(
+                            width: 25,
+                          ),
+                          Text(
+                            'Use biometric',
+                            style: lockAutomaticallySwitch
+                                ? bodyTextStyle
+                                : bodyTextStyle.copyWith(color: Colors.black54),
+                          ),
+                          Spacer(),
+                          SuaaGlobalSwitch(
+                            varName: useBiometric,
+                            varFunction: (newValue) {
+                              setState(() {
+                                useBiometric = newValue;
+                              });
+                            },
+                            disabledSwitch: lockAutomaticallySwitch,
+                          ),
+                        ],
                       ),
                     ),
                   ],
