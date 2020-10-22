@@ -257,7 +257,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     // app passcode
-
                     Container(
                       margin: EdgeInsets.only(top: 20),
                       child: Row(
@@ -277,23 +276,23 @@ class _SettingsPageState extends State<SettingsPage> {
                           SuaaGlobalSwitch(
                             varName: lockAutomaticallySwitch,
                             varFunction: (newValue) {
-                              print(newValue);
                               if (newValue == false) {
-                                //  removePasswordPopup();
+                                // await storage.delete(
+                                //   key:
+                                //       'simple_user_api_authentication_local_app_passcode',
+                                // );
                                 setState(() {
                                   useBiometric = newValue;
                                   lockAutomaticallySwitch = newValue;
                                 });
-                              }
-
-                              if (newValue == true) {
+                              } else {
                                 setPasswordPopup(
                                   icon: Icons.lock,
                                   context: context,
                                   title: 'Lock automatically',
                                   description:
                                       'When you close and reopen the app you have to fill in a password to get access to the data.',
-                                  confirmFunction: () {
+                                  confirmFunction: () async {
                                     if (appPasscode.text.isNotEmpty &&
                                         appPasscodeCheck.text.isNotEmpty) {
                                       if (appPasscode.text.length ==
@@ -302,9 +301,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                               appPasscodeLength) {
                                         if (appPasscode.text ==
                                             appPasscodeCheck.text) {
+                                          await storage.write(
+                                              key:
+                                                  'simple_user_api_authentication_local_app_passcode',
+                                              value: appPasscode.text);
                                           setState(() {
                                             appPasscode.text = '';
                                             appPasscodeCheck.text = '';
+
                                             Get.close(1);
                                             lockAutomaticallySwitch = newValue;
                                           });
@@ -365,10 +369,20 @@ class _SettingsPageState extends State<SettingsPage> {
                           Spacer(),
                           SuaaGlobalSwitch(
                             varName: useBiometric,
-                            varFunction: (newValue) {
-                              setState(() {
-                                useBiometric = newValue;
-                              });
+                            varFunction: (newValue) async {
+                              if (newValue == true) {
+                                print(await storage.read(
+                                  key:
+                                      'simple_user_api_authentication_local_app_passcode',
+                                ));
+                                setState(() {
+                                  useBiometric = newValue;
+                                });
+                              } else {
+                                setState(() {
+                                  useBiometric = newValue;
+                                });
+                              }
                             },
                             disabledSwitch: lockAutomaticallySwitch,
                           ),
