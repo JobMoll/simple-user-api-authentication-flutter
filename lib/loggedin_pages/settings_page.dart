@@ -101,6 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
+                    // manage login duration
                     Container(
                       margin: EdgeInsets.only(top: 20),
                       child: GestureDetector(
@@ -118,6 +119,31 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             Text(
                               'Manage login duration',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 17),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // app passcode
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: GestureDetector(
+                        onTap: () async {
+                          Get.to(ManageUserMaxLoginDurationPage());
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.code,
+                              color: Colors.black,
+                            ),
+                            SizedBox(
+                              width: 25,
+                            ),
+                            Text(
+                              'App passcode',
                               style:
                                   TextStyle(color: Colors.black, fontSize: 17),
                             ),

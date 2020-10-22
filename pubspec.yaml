@@ -24,9 +24,8 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^3.0.10
-  flutter_secure_storage: ^3.3.4
-  get: ^3.11.1
-  async: ^2.4.2
+  flutter_secure_storage: ^3.3.5
+  get: ^3.13.2
 
 dev_dependencies:
   flutter_test:
