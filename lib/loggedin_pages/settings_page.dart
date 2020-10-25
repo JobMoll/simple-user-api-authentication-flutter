@@ -22,6 +22,129 @@ class _SettingsPageState extends State<SettingsPage> {
   FocusNode appPasscodeNode = FocusNode();
   FocusNode appPasscodeCheckNode = FocusNode();
 
+  List totalPasscodeInputList = [];
+
+  // Future setPasswordPopup(
+  //     {IconData icon,
+  //     BuildContext context,
+  //     String title,
+  //     String description,
+  //     Function confirmFunction,
+  //     bool isDeleteButton}) {
+  //   return showGeneralDialog(
+  //     barrierLabel: title,
+  //     barrierDismissible: true,
+  //     barrierColor: Colors.black.withOpacity(0.6),
+  //     transitionDuration: Duration(milliseconds: 500),
+  //     context: context,
+  //     pageBuilder: (_, __, ___) {
+  //       return GestureDetector(
+  //         onTap: () {
+  //           FocusScope.of(context).requestFocus(new FocusNode());
+  //         },
+  //         child: Align(
+  //           alignment: Alignment.bottomCenter,
+  //           child: Material(
+  //             type: MaterialType.transparency,
+  //             child: Container(
+  //               height: 600,
+  //               margin: EdgeInsets.symmetric(horizontal: 12),
+  //               padding: EdgeInsets.all(16),
+  //               decoration: BoxDecoration(
+  //                 color: mainColor,
+  //                 borderRadius: widgetsBorderRadius,
+  //               ),
+  //               width: double.infinity,
+  //               child: Column(
+  //                 children: [
+  //                   Icon(
+  //                     icon,
+  //                     size: 40,
+  //                   ),
+  //                   Container(
+  //                     margin: EdgeInsets.only(
+  //                       top: 10,
+  //                     ),
+  //                     child: Text(
+  //                       title,
+  //                       style: smallHeadingTextStyle,
+  //                       maxLines: 1,
+  //                       overflow: TextOverflow.ellipsis,
+  //                     ),
+  //                   ),
+  //                   Container(
+  //                     margin: EdgeInsets.only(
+  //                       top: 6,
+  //                     ),
+  //                     child: Text(
+  //                       description,
+  //                       style: bodyTextStyle,
+  //                       textAlign: TextAlign.center,
+  //                       maxLines: 4,
+  //                       overflow: TextOverflow.ellipsis,
+  //                     ),
+  //                   ),
+  //                   // passcode input here
+  //                   SuaaGlobalTextfield(
+  //                     controller: appPasscode,
+  //                     controllerNode: appPasscodeNode,
+  //                     hintText:
+  //                         appPasscodeLength.toString() + ' Digit passcode',
+  //                     icon: Icons.lock_open,
+  //                     obscureText: true,
+  //                     maxCharacterInput: appPasscodeLength,
+  //                     textInputType: TextInputType.number,
+  //                     functionOnEditingComplete: () {
+  //                       FocusScope.of(context)
+  //                           .requestFocus(appPasscodeCheckNode);
+  //                     },
+  //                   ),
+  //                   SuaaGlobalTextfield(
+  //                     controller: appPasscodeCheck,
+  //                     controllerNode: appPasscodeCheckNode,
+  //                     hintText: 'Confirm ' +
+  //                         appPasscodeLength.toString() +
+  //                         ' digit passcode',
+  //                     icon: Icons.lock_open,
+  //                     obscureText: true,
+  //                     maxCharacterInput: appPasscodeLength,
+  //                     textInputType: TextInputType.number,
+  //                   ),
+
+  //                   SuaaGlobalButton(
+  //                     text: 'Confirm',
+  //                     functionOnTap: confirmFunction,
+  //                   ),
+  //                   Container(
+  //                     margin: EdgeInsets.only(
+  //                       top: 12,
+  //                     ),
+  //                     child: GestureDetector(
+  //                       onTap: () {
+  //                         Get.close(1);
+  //                       },
+  //                       child: Text(
+  //                         'Cancel',
+  //                         style: bodyTextStyle,
+  //                         textAlign: TextAlign.center,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //     transitionBuilder: (_, anim, __, child) {
+  //       return SlideTransition(
+  //         position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim),
+  //         child: child,
+  //       );
+  //     },
+  //   );
+  // }
   Future setPasswordPopup(
       {IconData icon,
       BuildContext context,
@@ -36,103 +159,102 @@ class _SettingsPageState extends State<SettingsPage> {
       transitionDuration: Duration(milliseconds: 500),
       context: context,
       pageBuilder: (_, __, ___) {
-        return GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Container(
-                height: 600,
-                margin: EdgeInsets.symmetric(horizontal: 12),
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: mainColor,
-                  borderRadius: widgetsBorderRadius,
-                ),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Icon(
-                      icon,
-                      size: 40,
-                    ),
-                    Container(
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SafeArea(
+                  bottom: false,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Container(
                       margin: EdgeInsets.only(
-                        top: 10,
+                          left: 12,
+                          right: 12,
+                          top: MediaQuery.of(context).size.height * 0.2),
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: mainColor,
+                        borderRadius: widgetsBorderRadius,
                       ),
-                      child: Text(
-                        title,
-                        style: smallHeadingTextStyle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 6,
-                      ),
-                      child: Text(
-                        description,
-                        style: bodyTextStyle,
-                        textAlign: TextAlign.center,
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    // passcode input here
-                    SuaaGlobalTextfield(
-                      controller: appPasscode,
-                      controllerNode: appPasscodeNode,
-                      hintText:
-                          appPasscodeLength.toString() + ' Digit passcode',
-                      icon: Icons.lock_open,
-                      obscureText: true,
-                      maxCharacterInput: appPasscodeLength,
-                      textInputType: TextInputType.number,
-                      functionOnEditingComplete: () {
-                        FocusScope.of(context)
-                            .requestFocus(appPasscodeCheckNode);
-                      },
-                    ),
-                    SuaaGlobalTextfield(
-                      controller: appPasscodeCheck,
-                      controllerNode: appPasscodeCheckNode,
-                      hintText: 'Confirm ' +
-                          appPasscodeLength.toString() +
-                          ' digit passcode',
-                      icon: Icons.lock_open,
-                      obscureText: true,
-                      maxCharacterInput: appPasscodeLength,
-                      textInputType: TextInputType.number,
-                    ),
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          Icon(
+                            icon,
+                            size: 40,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 10,
+                            ),
+                            child: Text(
+                              title,
+                              style: smallHeadingTextStyle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 6,
+                            ),
+                            child: Text(
+                              description,
+                              style: bodyTextStyle,
+                              textAlign: TextAlign.center,
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          // passcode input here
 
-                    SuaaGlobalButton(
-                      text: 'Confirm',
-                      functionOnTap: confirmFunction,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 12,
+                          SuaaPasscodeCount(
+                              totalPasscodeVar: totalPasscodeInputList),
+
+                          SuaaPasscodeInput(
+                            totalPasscodeVar: totalPasscodeInputList,
+                            functionOnItemTap: () {
+                              if (totalPasscodeInputList.length == 5) {
+                                setState(() {
+                                  print('max');
+                                });
+                              } else {
+                                setState(() {
+                                  print('not max');
+                                });
+                              }
+                            },
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 24,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                totalPasscodeInputList = [];
+                                Get.close(1);
+                              },
+                              child: Text(
+                                'Cancel',
+                                style: bodyTextStyle,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: GestureDetector(
-                        onTap: () {
-                          Get.close(1);
-                        },
-                        child: Text(
-                          'Cancel',
-                          style: bodyTextStyle,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
       transitionBuilder: (_, anim, __, child) {
@@ -427,6 +549,204 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SuaaPasscodeCount extends StatelessWidget {
+  const SuaaPasscodeCount({
+    Key key,
+    @required this.totalPasscodeVar,
+  }) : super(key: key);
+
+  final List totalPasscodeVar;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 30, bottom: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.circle,
+            color: totalPasscodeVar.length >= 1
+                ? accentColor
+                : accentColor.withOpacity(0.3),
+          ),
+          Icon(
+            Icons.circle,
+            color: totalPasscodeVar.length >= 2
+                ? accentColor
+                : accentColor.withOpacity(0.3),
+          ),
+          Icon(
+            Icons.circle,
+            color: totalPasscodeVar.length >= 3
+                ? accentColor
+                : accentColor.withOpacity(0.3),
+          ),
+          Icon(
+            Icons.circle,
+            color: totalPasscodeVar.length >= 4
+                ? accentColor
+                : accentColor.withOpacity(0.3),
+          ),
+          Icon(
+            Icons.circle,
+            color: totalPasscodeVar.length >= 5
+                ? accentColor
+                : accentColor.withOpacity(0.3),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SuaaPasscodeInput extends StatelessWidget {
+  const SuaaPasscodeInput({
+    Key key,
+    @required this.totalPasscodeVar,
+    @required this.functionOnItemTap,
+  }) : super(key: key);
+
+  final List totalPasscodeVar;
+  final Function functionOnItemTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          child: Row(
+            children: [
+              SuaaPasscodeItem(
+                number: 1,
+                totalPasscodeVar: totalPasscodeVar,
+                functionOnItemTap: functionOnItemTap,
+              ),
+              SuaaPasscodeItem(
+                number: 2,
+                totalPasscodeVar: totalPasscodeVar,
+                functionOnItemTap: functionOnItemTap,
+              ),
+              SuaaPasscodeItem(
+                number: 3,
+                totalPasscodeVar: totalPasscodeVar,
+                functionOnItemTap: functionOnItemTap,
+              ),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SuaaPasscodeItem(
+              number: 4,
+              totalPasscodeVar: totalPasscodeVar,
+              functionOnItemTap: functionOnItemTap,
+            ),
+            SuaaPasscodeItem(
+              number: 5,
+              totalPasscodeVar: totalPasscodeVar,
+              functionOnItemTap: functionOnItemTap,
+            ),
+            SuaaPasscodeItem(
+              number: 6,
+              totalPasscodeVar: totalPasscodeVar,
+              functionOnItemTap: functionOnItemTap,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SuaaPasscodeItem(
+              number: 7,
+              totalPasscodeVar: totalPasscodeVar,
+              functionOnItemTap: functionOnItemTap,
+            ),
+            SuaaPasscodeItem(
+              number: 8,
+              totalPasscodeVar: totalPasscodeVar,
+              functionOnItemTap: functionOnItemTap,
+            ),
+            SuaaPasscodeItem(
+              number: 9,
+              totalPasscodeVar: totalPasscodeVar,
+              functionOnItemTap: functionOnItemTap,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(child: Container()),
+            SuaaPasscodeItem(
+              number: 0,
+              totalPasscodeVar: totalPasscodeVar,
+              functionOnItemTap: functionOnItemTap,
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  if (totalPasscodeVar.length > 0) {
+                    totalPasscodeVar.removeLast();
+                    print(totalPasscodeVar);
+                    functionOnItemTap();
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: accentColor.withOpacity(0.2))),
+                  child: Icon(
+                    Icons.delete,
+                    size: 21,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class SuaaPasscodeItem extends StatelessWidget {
+  const SuaaPasscodeItem({
+    Key key,
+    @required this.number,
+    @required this.totalPasscodeVar,
+    @required this.functionOnItemTap,
+  }) : super(key: key);
+
+  final int number;
+  final List totalPasscodeVar;
+  final Function functionOnItemTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          totalPasscodeVar.add(number);
+          print(totalPasscodeVar);
+          functionOnItemTap();
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          decoration: BoxDecoration(
+              border: Border.all(color: accentColor.withOpacity(0.2))),
+          child: Text(
+            number.toString(),
+            style: smallHeadingTextStyle,
+            textAlign: TextAlign.center,
           ),
         ),
       ),
