@@ -266,6 +266,34 @@ class SimpleUserAPIAuthentication {
     });
   }
 
+  static addPasscodeToUserAcccount(int passcode) async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, dynamic> requestData = {
+      'access_token': accessToken,
+      'new_passcode': passcode,
+    };
+
+    dioSuaa
+        .post('/wp-json/simple-user-api-authentication/change-user-passcode',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+
+      if (response.statusCode == 200) {
+        if (responseData['status'] == 'success') {
+          SimpleUserAPIAuthentication.showSimpleMessage(responseData['title'],
+              responseData['message'], responseData['status'], 3);
+        }
+      }
+    }).catchError((e) {
+      if (dioCalls.CancelToken.isCancel(e)) {
+        print('error: cancelled - change user data');
+      }
+    });
+  }
+
   static Future<MaxLoginDurationClass> getMaxLoginDuration() async {
     String accessToken =
         await storage.read(key: 'simple_user_api_authentication_access_token');

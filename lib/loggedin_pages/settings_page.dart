@@ -22,7 +22,8 @@ class _SettingsPageState extends State<SettingsPage> {
   FocusNode appPasscodeNode = FocusNode();
   FocusNode appPasscodeCheckNode = FocusNode();
 
-  List totalPasscodeInputList = [];
+  List<int> totalPasscodeInputList = [];
+  List<dynamic> totalPasscodeInputListFirst = [];
 
   // Future setPasswordPopup(
   //     {IconData icon,
@@ -220,13 +221,41 @@ class _SettingsPageState extends State<SettingsPage> {
                             totalPasscodeVar: totalPasscodeInputList,
                             functionOnItemTap: () {
                               if (totalPasscodeInputList.length == 5) {
-                                setState(() {
-                                  print('max');
-                                });
+                                if (totalPasscodeInputListFirst.isEmpty) {
+                                  print('first array is full');
+                                  setState(() {
+                                    totalPasscodeInputListFirst
+                                        .addAll(totalPasscodeInputList);
+                                    totalPasscodeInputList.clear();
+                                  });
+                                } else {
+                                  int totalPasscode = int.parse(
+                                      totalPasscodeInputList.join(''));
+                                  int totalPasscodeFirst = int.parse(
+                                      totalPasscodeInputListFirst.join(''));
+
+                                  if (totalPasscode == totalPasscodeFirst) {
+                                    // passcodes are the same!! succes
+
+                                    setState(() {
+                                      print('successss');
+                                    });
+                                  } else {
+                                    // passcodes do not match
+                                    setState(() {
+                                      totalPasscodeInputListFirst.clear();
+                                      totalPasscodeInputList.clear();
+                                    });
+
+                                    SimpleUserAPIAuthentication.showSimpleMessage(
+                                        "Passcodes do not match",
+                                        "The passcodes don't match, try again!",
+                                        'error',
+                                        3);
+                                  }
+                                }
                               } else {
-                                setState(() {
-                                  print('not max');
-                                });
+                                setState(() {});
                               }
                             },
                           ),
@@ -237,7 +266,11 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             child: GestureDetector(
                               onTap: () {
-                                totalPasscodeInputList = [];
+                                setState(() {
+                                  totalPasscodeInputListFirst.clear();
+                                  totalPasscodeInputList.clear();
+                                });
+
                                 Get.close(1);
                               },
                               child: Text(
@@ -562,7 +595,7 @@ class SuaaPasscodeCount extends StatelessWidget {
     @required this.totalPasscodeVar,
   }) : super(key: key);
 
-  final List totalPasscodeVar;
+  final List<int> totalPasscodeVar;
 
   @override
   Widget build(BuildContext context) {
@@ -696,7 +729,6 @@ class SuaaPasscodeInput extends StatelessWidget {
                 onTap: () {
                   if (totalPasscodeVar.length > 0) {
                     totalPasscodeVar.removeLast();
-                    print(totalPasscodeVar);
                     functionOnItemTap();
                   }
                 },
@@ -736,7 +768,6 @@ class SuaaPasscodeItem extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           totalPasscodeVar.add(number);
-          print(totalPasscodeVar);
           functionOnItemTap();
         },
         child: Container(
