@@ -12,7 +12,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool lockAutomaticallySwitch = false;
   bool useBiometric = false;
   int appPasscodeLength = 5;
 
@@ -25,134 +24,28 @@ class _SettingsPageState extends State<SettingsPage> {
   List<int> totalPasscodeInputList = [];
   List<dynamic> totalPasscodeInputListFirst = [];
 
-  // Future setPasswordPopup(
-  //     {IconData icon,
-  //     BuildContext context,
-  //     String title,
-  //     String description,
-  //     Function confirmFunction,
-  //     bool isDeleteButton}) {
-  //   return showGeneralDialog(
-  //     barrierLabel: title,
-  //     barrierDismissible: true,
-  //     barrierColor: Colors.black.withOpacity(0.6),
-  //     transitionDuration: Duration(milliseconds: 500),
-  //     context: context,
-  //     pageBuilder: (_, __, ___) {
-  //       return GestureDetector(
-  //         onTap: () {
-  //           FocusScope.of(context).requestFocus(new FocusNode());
-  //         },
-  //         child: Align(
-  //           alignment: Alignment.bottomCenter,
-  //           child: Material(
-  //             type: MaterialType.transparency,
-  //             child: Container(
-  //               height: 600,
-  //               margin: EdgeInsets.symmetric(horizontal: 12),
-  //               padding: EdgeInsets.all(16),
-  //               decoration: BoxDecoration(
-  //                 color: mainColor,
-  //                 borderRadius: widgetsBorderRadius,
-  //               ),
-  //               width: double.infinity,
-  //               child: Column(
-  //                 children: [
-  //                   Icon(
-  //                     icon,
-  //                     size: 40,
-  //                   ),
-  //                   Container(
-  //                     margin: EdgeInsets.only(
-  //                       top: 10,
-  //                     ),
-  //                     child: Text(
-  //                       title,
-  //                       style: smallHeadingTextStyle,
-  //                       maxLines: 1,
-  //                       overflow: TextOverflow.ellipsis,
-  //                     ),
-  //                   ),
-  //                   Container(
-  //                     margin: EdgeInsets.only(
-  //                       top: 6,
-  //                     ),
-  //                     child: Text(
-  //                       description,
-  //                       style: bodyTextStyle,
-  //                       textAlign: TextAlign.center,
-  //                       maxLines: 4,
-  //                       overflow: TextOverflow.ellipsis,
-  //                     ),
-  //                   ),
-  //                   // passcode input here
-  //                   SuaaGlobalTextfield(
-  //                     controller: appPasscode,
-  //                     controllerNode: appPasscodeNode,
-  //                     hintText:
-  //                         appPasscodeLength.toString() + ' Digit passcode',
-  //                     icon: Icons.lock_open,
-  //                     obscureText: true,
-  //                     maxCharacterInput: appPasscodeLength,
-  //                     textInputType: TextInputType.number,
-  //                     functionOnEditingComplete: () {
-  //                       FocusScope.of(context)
-  //                           .requestFocus(appPasscodeCheckNode);
-  //                     },
-  //                   ),
-  //                   SuaaGlobalTextfield(
-  //                     controller: appPasscodeCheck,
-  //                     controllerNode: appPasscodeCheckNode,
-  //                     hintText: 'Confirm ' +
-  //                         appPasscodeLength.toString() +
-  //                         ' digit passcode',
-  //                     icon: Icons.lock_open,
-  //                     obscureText: true,
-  //                     maxCharacterInput: appPasscodeLength,
-  //                     textInputType: TextInputType.number,
-  //                   ),
+  bool passcodeIsEnabled = false;
+  getPasscodeToUserAcccountOnPage() async {
+    String passcode =
+        await SimpleUserAPIAuthentication.getPasscodeToUserAcccount();
 
-  //                   SuaaGlobalButton(
-  //                     text: 'Confirm',
-  //                     functionOnTap: confirmFunction,
-  //                   ),
-  //                   Container(
-  //                     margin: EdgeInsets.only(
-  //                       top: 12,
-  //                     ),
-  //                     child: GestureDetector(
-  //                       onTap: () {
-  //                         Get.close(1);
-  //                       },
-  //                       child: Text(
-  //                         'Cancel',
-  //                         style: bodyTextStyle,
-  //                         textAlign: TextAlign.center,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //     transitionBuilder: (_, anim, __, child) {
-  //       return SlideTransition(
-  //         position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim),
-  //         child: child,
-  //       );
-  //     },
-  //   );
-  // }
-  Future setPasswordPopup(
-      {IconData icon,
-      BuildContext context,
-      String title,
-      String description,
-      Function confirmFunction,
-      bool isDeleteButton}) {
+    //TODO calls before having the return data
+    print(passcode);
+
+    if (passcode != '' && passcode != null) {
+      setState(() {
+        passcodeIsEnabled = true;
+      });
+    }
+  }
+
+  Future setPasswordPopup({
+    IconData icon,
+    BuildContext context,
+    String title,
+    String description,
+    bool isDeleteButton,
+  }) {
     return showGeneralDialog(
       barrierLabel: title,
       barrierDismissible: true,
@@ -215,30 +108,41 @@ class _SettingsPageState extends State<SettingsPage> {
                           // passcode input here
 
                           SuaaPasscodeCount(
-                              totalPasscodeVar: totalPasscodeInputList),
+                            totalPasscodeVar: totalPasscodeInputList,
+                            appPasscodeLength: appPasscodeLength,
+                          ),
 
                           SuaaPasscodeInput(
                             totalPasscodeVar: totalPasscodeInputList,
                             functionOnItemTap: () {
-                              if (totalPasscodeInputList.length == 5) {
+                              if (totalPasscodeInputList.length ==
+                                  appPasscodeLength) {
                                 if (totalPasscodeInputListFirst.isEmpty) {
-                                  print('first array is full');
                                   setState(() {
                                     totalPasscodeInputListFirst
                                         .addAll(totalPasscodeInputList);
                                     totalPasscodeInputList.clear();
                                   });
                                 } else {
-                                  int totalPasscode = int.parse(
-                                      totalPasscodeInputList.join(''));
-                                  int totalPasscodeFirst = int.parse(
-                                      totalPasscodeInputListFirst.join(''));
+                                  String totalPasscode =
+                                      totalPasscodeInputList.join('');
+                                  String totalPasscodeFirst =
+                                      totalPasscodeInputListFirst.join('');
 
                                   if (totalPasscode == totalPasscodeFirst) {
                                     // passcodes are the same!! succes
 
+                                    Get.close(1);
+
+                                    SimpleUserAPIAuthentication
+                                        .changePasscodeToUserAcccount(
+                                            totalPasscodeFirst);
+
                                     setState(() {
-                                      print('successss');
+                                      //TODO call this on the main page not in the plugin state
+                                      passcodeIsEnabled = true;
+                                      totalPasscodeInputListFirst.clear();
+                                      totalPasscodeInputList.clear();
                                     });
                                   } else {
                                     // passcodes do not match
@@ -302,6 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
+    getPasscodeToUserAcccountOnPage();
   }
 
   @override
@@ -424,21 +329,20 @@ class _SettingsPageState extends State<SettingsPage> {
                             width: 25,
                           ),
                           Text(
-                            'Lock automatically',
+                            'App passcode',
                             style: bodyTextStyle,
                           ),
                           Spacer(),
                           SuaaGlobalSwitch(
-                            varName: lockAutomaticallySwitch,
+                            varName: passcodeIsEnabled,
                             varFunction: (newValue) {
                               if (newValue == false) {
-                                // await storage.delete(
-                                //   key:
-                                //       'simple_user_api_authentication_local_app_passcode',
-                                // );
+                                SimpleUserAPIAuthentication
+                                    .changePasscodeToUserAcccount(false);
+
                                 setState(() {
                                   useBiometric = newValue;
-                                  lockAutomaticallySwitch = newValue;
+                                  passcodeIsEnabled = newValue;
                                 });
                               } else {
                                 setPasswordPopup(
@@ -447,53 +351,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                   title: 'Lock automatically',
                                   description:
                                       'When you close and reopen the app you have to fill in a password to get access to the data.',
-                                  confirmFunction: () async {
-                                    if (appPasscode.text.isNotEmpty &&
-                                        appPasscodeCheck.text.isNotEmpty) {
-                                      if (appPasscode.text.length ==
-                                              appPasscodeLength &&
-                                          appPasscodeCheck.text.length ==
-                                              appPasscodeLength) {
-                                        if (appPasscode.text ==
-                                            appPasscodeCheck.text) {
-                                          await storage.write(
-                                              key:
-                                                  'simple_user_api_authentication_local_app_passcode',
-                                              value: appPasscode.text);
-                                          setState(() {
-                                            appPasscode.text = '';
-                                            appPasscodeCheck.text = '';
-
-                                            Get.close(1);
-                                            lockAutomaticallySwitch = newValue;
-                                          });
-                                        } else {
-                                          SimpleUserAPIAuthentication
-                                              .showSimpleMessage(
-                                                  "App passcode do not match",
-                                                  'The app passcodes you filled in have to be the same...',
-                                                  'error',
-                                                  3);
-                                        }
-                                      } else {
-                                        SimpleUserAPIAuthentication
-                                            .showSimpleMessage(
-                                                "App passcode wrong length",
-                                                'App passcode should be ' +
-                                                    appPasscodeLength
-                                                        .toString() +
-                                                    ' numbers long...',
-                                                'error',
-                                                3);
-                                      }
-                                    } else {
-                                      SimpleUserAPIAuthentication.showSimpleMessage(
-                                          "App passcode field(s) empty",
-                                          'You forgot to fill in one of the app passcode fields...',
-                                          'error',
-                                          3);
-                                    }
-                                  },
                                 );
                               }
                             },
@@ -508,7 +365,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           Icon(
                             Icons.fingerprint,
-                            color: lockAutomaticallySwitch
+                            color: passcodeIsEnabled
                                 ? Colors.black
                                 : Colors.black54,
                           ),
@@ -517,7 +374,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           Text(
                             'Use biometric',
-                            style: lockAutomaticallySwitch
+                            style: passcodeIsEnabled
                                 ? bodyTextStyle
                                 : bodyTextStyle.copyWith(color: Colors.black54),
                           ),
@@ -526,10 +383,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             varName: useBiometric,
                             varFunction: (newValue) async {
                               if (newValue == true) {
-                                print(await storage.read(
-                                  key:
-                                      'simple_user_api_authentication_local_app_passcode',
-                                ));
                                 setState(() {
                                   useBiometric = newValue;
                                 });
@@ -539,7 +392,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 });
                               }
                             },
-                            disabledSwitch: lockAutomaticallySwitch,
+                            disabledSwitch: passcodeIsEnabled,
                           ),
                         ],
                       ),
@@ -593,9 +446,11 @@ class SuaaPasscodeCount extends StatelessWidget {
   const SuaaPasscodeCount({
     Key key,
     @required this.totalPasscodeVar,
+    @required this.appPasscodeLength,
   }) : super(key: key);
 
   final List<int> totalPasscodeVar;
+  final int appPasscodeLength;
 
   @override
   Widget build(BuildContext context) {
@@ -604,35 +459,20 @@ class SuaaPasscodeCount extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.circle,
-            color: totalPasscodeVar.length >= 1
-                ? accentColor
-                : accentColor.withOpacity(0.3),
-          ),
-          Icon(
-            Icons.circle,
-            color: totalPasscodeVar.length >= 2
-                ? accentColor
-                : accentColor.withOpacity(0.3),
-          ),
-          Icon(
-            Icons.circle,
-            color: totalPasscodeVar.length >= 3
-                ? accentColor
-                : accentColor.withOpacity(0.3),
-          ),
-          Icon(
-            Icons.circle,
-            color: totalPasscodeVar.length >= 4
-                ? accentColor
-                : accentColor.withOpacity(0.3),
-          ),
-          Icon(
-            Icons.circle,
-            color: totalPasscodeVar.length >= 5
-                ? accentColor
-                : accentColor.withOpacity(0.3),
+          Container(
+            height: 30,
+            child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: appPasscodeLength,
+                itemBuilder: (BuildContext context, int index) {
+                  return Icon(
+                    Icons.circle,
+                    color: totalPasscodeVar.length >= index + 1
+                        ? accentColor
+                        : accentColor.withOpacity(0.3),
+                  );
+                }),
           ),
         ],
       ),

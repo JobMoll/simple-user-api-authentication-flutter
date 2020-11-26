@@ -266,7 +266,7 @@ class SimpleUserAPIAuthentication {
     });
   }
 
-  static addPasscodeToUserAcccount(int passcode) async {
+  static changePasscodeToUserAcccount(passcode) async {
     String accessToken =
         await storage.read(key: 'simple_user_api_authentication_access_token');
 
@@ -276,7 +276,7 @@ class SimpleUserAPIAuthentication {
     };
 
     dioSuaa
-        .post('/wp-json/simple-user-api-authentication/change-user-passcode',
+        .post('/wp-json/simple-user-api-authentication/change-app-passcode',
             data: requestData)
         .then((response) async {
       var responseData = response.data;
@@ -289,7 +289,31 @@ class SimpleUserAPIAuthentication {
       }
     }).catchError((e) {
       if (dioCalls.CancelToken.isCancel(e)) {
-        print('error: cancelled - change user data');
+        print('error: cancelled - change app passcode');
+      }
+    });
+  }
+
+  static getPasscodeToUserAcccount() async {
+    String accessToken =
+        await storage.read(key: 'simple_user_api_authentication_access_token');
+
+    Map<String, String> requestData = {'access_token': accessToken};
+
+    dioSuaa
+        .post('/wp-json/simple-user-api-authentication/get-app-passcode',
+            data: requestData)
+        .then((response) async {
+      var responseData = response.data;
+
+      if (response.statusCode == 200) {
+        if (responseData['status'] == 'success') {
+          return responseData['app_passcode'];
+        }
+      }
+    }).catchError((e) {
+      if (dioCalls.CancelToken.isCancel(e)) {
+        print('error: cancelled - get app passcode');
       }
     });
   }
