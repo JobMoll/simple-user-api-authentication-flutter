@@ -13,7 +13,7 @@ class _InformationPageState extends State<InformationPage> {
   void initState() {
     super.initState();
 
-    SimpleUserAPIAuthentication.getUserData(true);
+    SUAAUserDetails.getUserData(true);
   }
 
   @override
@@ -36,13 +36,13 @@ class _InformationPageState extends State<InformationPage> {
             IconButton(
                 icon: Icon(Icons.refresh, color: accentOppositeColor),
                 onPressed: () {
-                  SimpleUserAPIAuthentication.showSimpleMessage(
+                  SUAABasics.showSimpleMessage(
                       'Fetching user data...',
                       'Fetching the user data one moment please :)',
                       'info',
                       100);
 
-                  SimpleUserAPIAuthentication.getUserData();
+                  SUAAUserDetails.getUserData();
                 })
           ],
         ),

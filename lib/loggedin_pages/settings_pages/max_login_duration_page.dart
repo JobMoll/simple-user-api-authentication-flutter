@@ -163,7 +163,7 @@ class _ManageUserMaxLoginDurationPageState
                           functionOnTap: () {
                             if (timeInputIntTextfield.text.isNotEmpty &&
                                 currentTimeInputText.isNotEmpty) {
-                              SimpleUserAPIAuthentication.showSimpleMessage(
+                              SUAABasics.showSimpleMessage(
                                   'Changing max login duration',
                                   'One moment while we your max login duration...',
                                   'info',
@@ -174,10 +174,10 @@ class _ManageUserMaxLoginDurationPageState
                                   ' ' +
                                   currentTimeInputText.toLowerCase();
 
-                              SimpleUserAPIAuthentication
-                                  .changeMaxLoginDuration(fullTimeInputText);
+                              SUAASettings.changeMaxLoginDuration(
+                                  fullTimeInputText);
                             } else {
-                              SimpleUserAPIAuthentication.showSimpleMessage(
+                              SUAABasics.showSimpleMessage(
                                   'You forgot to fill in a field',
                                   'You have to fill in a number in the field...',
                                   'error',

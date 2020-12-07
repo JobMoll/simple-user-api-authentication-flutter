@@ -77,7 +77,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                         return;
                       }
 
-                      SimpleUserAPIAuthentication.registerNewUser(
+                      SUAABeforeAuth.registerNewUser(
                           usernameTextfield.text, emailTextfield.text);
 
                       setState(() {

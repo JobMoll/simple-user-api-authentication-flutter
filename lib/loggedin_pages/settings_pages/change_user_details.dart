@@ -201,18 +201,18 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                             if (firstnameTextfield.text != '' &&
                                 lastnameTextfield.text != '' &&
                                 emailTextfield.text != '') {
-                              SimpleUserAPIAuthentication.showSimpleMessage(
+                              SUAABasics.showSimpleMessage(
                                   'Changing your personal details',
                                   'One moment while we change your personal details...',
                                   'info',
                                   100);
 
-                              SimpleUserAPIAuthentication.changeUserData(
+                              SUAAProfilePage.changeUserData(
                                   firstnameTextfield.text,
                                   lastnameTextfield.text,
                                   emailTextfield.text);
                             } else {
-                              SimpleUserAPIAuthentication.showSimpleMessage(
+                              SUAABasics.showSimpleMessage(
                                   "One field isn't filled in",
                                   'You have to fill in all the required fields...',
                                   'error',
@@ -300,13 +300,13 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                               if (checkPasswordStrength(
                                       passwordTextfield.text, minLength) ==
                                   true) {
-                                SimpleUserAPIAuthentication.showSimpleMessage(
+                                SUAABasics.showSimpleMessage(
                                     'Changing your password',
                                     'One moment while we change your password...',
                                     'info',
                                     100);
 
-                                SimpleUserAPIAuthentication.changePassword(
+                                SUAAProfilePage.changePassword(
                                   passwordConfirmTextfield.text,
                                 );
 
@@ -320,14 +320,14 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                                   hasMinLength = false;
                                 });
                               } else {
-                                SimpleUserAPIAuthentication.showSimpleMessage(
+                                SUAABasics.showSimpleMessage(
                                     "Your password isn't strong enough",
                                     "Your password doesn't meet the requirements...",
                                     'error',
                                     3);
                               }
                             } else {
-                              SimpleUserAPIAuthentication.showSimpleMessage(
+                              SUAABasics.showSimpleMessage(
                                   'The passwords are not the same',
                                   'The passwords you filled in are not the same...',
                                   'error',

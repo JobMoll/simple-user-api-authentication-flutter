@@ -46,13 +46,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   text: 'Create a new password',
                   functionOnTap: () {
                     if (usernameOrEmailTextfield.text != '') {
-                      SimpleUserAPIAuthentication.showSimpleMessage(
+                      SUAABasics.showSimpleMessage(
                           'One moment while we prepare your url',
                           'We are preparing your reset url...',
                           'info',
                           100);
 
-                      SimpleUserAPIAuthentication.forgotPassword(
+                      SUAAAuth.forgotPassword(
                         usernameOrEmailTextfield.text,
                       );
 
@@ -60,7 +60,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         usernameOrEmailTextfield.text = '';
                       });
                     } else {
-                      SimpleUserAPIAuthentication.showSimpleMessage(
+                      SUAABasics.showSimpleMessage(
                           "You can't leave this field empty",
                           'You forgot to fill in your username or email...',
                           'error',

@@ -26,8 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool passcodeIsEnabled = false;
   getPasscodeToUserAcccountOnPage() async {
-    String passcode =
-        await SimpleUserAPIAuthentication.getPasscodeToUserAcccount();
+    String passcode = await SUAAPasscode.getPasscodeToUserAcccount();
 
     //TODO calls before having the return data
     print(passcode);
@@ -134,9 +133,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                     Get.close(1);
 
-                                    SimpleUserAPIAuthentication
-                                        .changePasscodeToUserAcccount(
-                                            totalPasscodeFirst);
+                                    SUAAPasscode.changePasscodeToUserAcccount(
+                                        totalPasscodeFirst);
 
                                     setState(() {
                                       //TODO call this on the main page not in the plugin state
@@ -151,7 +149,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       totalPasscodeInputList.clear();
                                     });
 
-                                    SimpleUserAPIAuthentication.showSimpleMessage(
+                                    SUAABasics.showSimpleMessage(
                                         "Passcodes do not match",
                                         "The passcodes don't match, try again!",
                                         'error',
@@ -337,8 +335,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             varName: passcodeIsEnabled,
                             varFunction: (newValue) {
                               if (newValue == false) {
-                                SimpleUserAPIAuthentication
-                                    .changePasscodeToUserAcccount(false);
+                                SUAAPasscode.changePasscodeToUserAcccount(
+                                    false);
 
                                 setState(() {
                                   useBiometric = newValue;
@@ -409,12 +407,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 Container(
                   child: GestureDetector(
                     onTap: () async {
-                      SimpleUserAPIAuthentication.showSimpleMessage(
-                          'Loggin you out',
-                          'One moment while we log you out...',
-                          'info',
-                          100);
-                      SimpleUserAPIAuthentication.userLogout(true);
+                      SUAABasics.showSimpleMessage('Loggin you out',
+                          'One moment while we log you out...', 'info', 100);
+                      SUAAAuth.userLogout(true);
                     },
                     child: Row(
                       children: [

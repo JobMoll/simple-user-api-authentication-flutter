@@ -12,7 +12,7 @@ class _LoggedinOrNotPageState extends State<LoggedinOrNotPage> {
   @override
   void initState() {
     super.initState();
-    SimpleUserAPIAuthentication.checkForValidRefreshToken();
+    SUAAAuth.checkForValidRefreshToken();
   }
 
   @override
