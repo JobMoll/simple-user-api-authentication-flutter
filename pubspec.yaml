@@ -25,7 +25,8 @@ dependencies:
     sdk: flutter
   dio: ^3.0.10
   flutter_secure_storage: ^3.3.5
-  get: ^3.13.2
+  get: ^3.24.0
+  dio_http2_adapter: ^1.0.1
 
 dev_dependencies:
   flutter_test:

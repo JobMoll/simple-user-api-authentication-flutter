@@ -207,7 +207,7 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                                   'info',
                                   100);
 
-                              SUAAProfilePage.changeUserData(
+                              SUAASettings.changeUserData(
                                   firstnameTextfield.text,
                                   lastnameTextfield.text,
                                   emailTextfield.text);
@@ -306,7 +306,7 @@ class _ChangeUserDetailsPageState extends State<ChangeUserDetailsPage> {
                                     'info',
                                     100);
 
-                                SUAAProfilePage.changePassword(
+                                SUAASettings.changePassword(
                                   passwordConfirmTextfield.text,
                                 );
 

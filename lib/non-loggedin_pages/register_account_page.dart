@@ -62,14 +62,14 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                   functionOnTap: () {
                     if (usernameTextfield.text != '' &&
                         emailTextfield.text != '') {
-                      SimpleUserAPIAuthentication.showSimpleMessage(
+                      SUAABasics.showSimpleMessage(
                           'Trying to register',
                           'We are trying to register your new account...',
                           'info',
                           100);
 
                       if (usernameTextfield.text.contains(' ')) {
-                        SimpleUserAPIAuthentication.showSimpleMessage(
+                        SUAABasics.showSimpleMessage(
                             'Username is not valid :(',
                             "A username can't have spaces in it...",
                             'error',
@@ -77,7 +77,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                         return;
                       }
 
-                      SUAABeforeAuth.registerNewUser(
+                      SUAAAuth.registerNewUser(
                           usernameTextfield.text, emailTextfield.text);
 
                       setState(() {
@@ -85,7 +85,7 @@ class _RegisterAccountPagePageState extends State<RegisterAccountPage> {
                         emailTextfield.text = '';
                       });
                     } else {
-                      SimpleUserAPIAuthentication.showSimpleMessage(
+                      SUAABasics.showSimpleMessage(
                           'Fill in all required fields',
                           'You forgot to fill in one of the fields...',
                           'error',

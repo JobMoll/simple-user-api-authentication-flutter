@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart' as dioCalls;
+import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
@@ -14,7 +15,15 @@ final dioSuaa = dioCalls.Dio(dioCalls.BaseOptions(
     followRedirects: false,
     validateStatus: (status) {
       return status < 500;
-    }));
+    }))
+  ..interceptors.add(dioCalls.LogInterceptor())
+  ..httpClientAdapter = Http2Adapter(
+    ConnectionManager(
+      idleTimeout: 10000,
+      // Ignore bad certificate
+      onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
+    ),
+  );
 
 final dioSuaaRefreshAccessToken = dioCalls.Dio(
   dioCalls.BaseOptions(
@@ -23,7 +32,15 @@ final dioSuaaRefreshAccessToken = dioCalls.Dio(
       validateStatus: (status) {
         return status < 500;
       }),
-);
+)
+  ..interceptors.add(dioCalls.LogInterceptor())
+  ..httpClientAdapter = Http2Adapter(
+    ConnectionManager(
+      idleTimeout: 10000,
+      // Ignore bad certificate
+      onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
+    ),
+  );
 final storage = new secureStorage.FlutterSecureStorage();
 
 class SUAABasics {
@@ -34,9 +51,6 @@ class SUAABasics {
           print('send request：${options.baseUrl}${options.path}');
         },
         onResponse: (dioCalls.Response response) async {
-          print(response.data.toString() +
-              " - " +
-              response.statusCode.toString());
           if (response.statusCode == 401) {
             dioCalls.RequestOptions options = response.request;
 

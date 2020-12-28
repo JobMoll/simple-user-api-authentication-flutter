@@ -78,17 +78,17 @@ class _LoginPageState extends State<LoginPage> {
                     functionOnTap: () {
                       if (passwordTextfield.text != '' &&
                           usernameOrEmailTextfield.text != '') {
-                        SimpleUserAPIAuthentication.showSimpleMessage(
+                        SUAABasics.showSimpleMessage(
                             'Checking if login credentials are correct',
                             'One moment while we check your account...',
                             'info',
                             100);
 
-                        SimpleUserAPIAuthentication.requestRefreshToken(
+                        SUAAAuth.requestRefreshToken(
                             usernameOrEmailTextfield.text,
                             passwordTextfield.text);
                       } else {
-                        SimpleUserAPIAuthentication.showSimpleMessage(
+                        SUAABasics.showSimpleMessage(
                             'Fill in all required fields',
                             'You forgot to fill in one of the fields...',
                             'error',
