@@ -129,7 +129,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                   if (totalPasscode == totalPasscodeFirst) {
                                     // passcodes are the same!! succes
-                                    Get.close(1);
+                                    Get.back(closeOverlays: true);
 
                                     SUAAPasscode.changePasscodeToUserAcccount(
                                         totalPasscodeFirst);
@@ -171,7 +171,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   totalPasscodeInputList.clear();
                                 });
 
-                                Get.close(1);
+                                Get.back(closeOverlays: true);
                               },
                               child: Text(
                                 'Cancel',
