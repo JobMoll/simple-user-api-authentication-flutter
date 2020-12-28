@@ -26,16 +26,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool passcodeIsEnabled = false;
   getPasscodeToUserAcccountOnPage() async {
-    String passcode = await SUAAPasscode.getPasscodeToUserAcccount();
+    SUAAPasscode.getPasscodeToUserAcccount().then((passcode) {
+      print('Passcode: ' + passcode.toString());
 
-    //TODO calls before having the return data
-    print(passcode);
-
-    if (passcode != '' && passcode != null) {
-      setState(() {
-        passcodeIsEnabled = true;
-      });
-    }
+      if (passcode != '' && passcode != null) {
+        setState(() {
+          passcodeIsEnabled = true;
+        });
+      }
+    });
   }
 
   Future setPasswordPopup({
@@ -130,7 +129,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                   if (totalPasscode == totalPasscodeFirst) {
                                     // passcodes are the same!! succes
-
                                     Get.close(1);
 
                                     SUAAPasscode.changePasscodeToUserAcccount(

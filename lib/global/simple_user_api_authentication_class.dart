@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart' as dioCalls;
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,9 @@ class SUAABasics {
           print('send request：${options.baseUrl}${options.path}');
         },
         onResponse: (dioCalls.Response response) async {
+          print(response.data.toString() +
+              " - " +
+              response.statusCode.toString());
           if (response.statusCode == 401) {
             dioCalls.RequestOptions options = response.request;
 
@@ -315,15 +319,17 @@ class SUAAPasscode {
 
     Map<String, String> requestData = {'access_token': accessToken};
 
-    dioSuaa
+    String passcode;
+
+    await dioSuaa
         .post('/wp-json/simple-user-api-authentication/get-app-passcode',
             data: requestData)
-        .then((response) async {
+        .then((response) {
       var responseData = response.data;
 
       if (response.statusCode == 200) {
         if (responseData['status'] == 'success') {
-          return responseData['app_passcode'];
+          passcode = responseData['app_passcode'].toString();
         }
       }
     }).catchError((e) {
@@ -331,6 +337,7 @@ class SUAAPasscode {
         print('error: cancelled - get app passcode');
       }
     });
+    return passcode;
   }
 }
 
