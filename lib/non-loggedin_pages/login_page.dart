@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_user_api_authentication/global/global_widgets.dart';
 import 'package:simple_user_api_authentication/global/simple_user_api_authentication_class.dart';
+import 'package:simple_user_api_authentication/non-loggedin_pages/forgot_password.dart';
+import 'package:simple_user_api_authentication/non-loggedin_pages/register_account_page.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -100,7 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                     margin: EdgeInsets.only(top: 65),
                     child: GestureDetector(
                       onTap: () {
-                        Get.toNamed('/registerAccountPage');
+                        Get.to(RegisterAccountPage(),
+                            transition: Transition.native);
                       },
                       child: Text(
                         'Create a new account',
@@ -117,7 +120,8 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                     child: GestureDetector(
                       onTap: () {
-                        Get.toNamed('/forgotPasswordPage');
+                        Get.to(ForgotPasswordPage(),
+                            transition: Transition.native);
                       },
                       child: Text(
                         'I forgot my password',

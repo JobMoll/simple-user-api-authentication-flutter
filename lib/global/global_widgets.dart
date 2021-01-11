@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:simple_user_api_authentication/loggedin_pages/information_page.dart';
+import 'package:simple_user_api_authentication/loggedin_pages/settings_page.dart';
 
 Color mainColor = Colors.white; // for the background etc
 Color accentColor = Colors.black; // for the buttons, textfields etc
@@ -143,7 +145,8 @@ class SuaaGlobalNavigationBar extends StatelessWidget {
                   icon: Icons.home,
                   iconColor: accentColor,
                   itemFunction: () {
-                    Get.toNamed('/informationPage');
+                    Get.to(InformationPage(),
+                        transition: Transition.noTransition);
                   },
                 ),
                 SuaaGlobalNavigationBarItem(
@@ -152,7 +155,7 @@ class SuaaGlobalNavigationBar extends StatelessWidget {
                   icon: Icons.settings,
                   iconColor: accentColor,
                   itemFunction: () {
-                    Get.toNamed('/settingsPage');
+                    Get.to(SettingsPage(), transition: Transition.noTransition);
                   },
                 ),
               ]),

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:dio/dio.dart' as dioCalls;
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secureStorage;
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
+import 'package:simple_user_api_authentication/loggedin_pages/information_page.dart';
+import 'package:simple_user_api_authentication/non-loggedin_pages/login_page.dart';
 
 String baseDomainUrl = 'https://usercookieauthenticationapi.mollupbuilding.nl';
 
@@ -367,7 +368,7 @@ class SUAAAuth {
 
         SUAABasics.requestNewAccessTokenInterceptor();
 
-        Get.offNamed('/informationPage');
+        Get.off(InformationPage(), transition: Transition.fade);
       } else {
         SUAABasics.showSimpleMessage(
             'Login problem...', responseData['message'], 'error', 3);
@@ -426,7 +427,7 @@ class SUAAAuth {
 
           SUAABasics.requestNewAccessTokenInterceptor();
 
-          Get.offNamed("/informationPage");
+          Get.off(InformationPage(), transition: Transition.fade);
         } else {
           userLogout();
         }
@@ -454,7 +455,7 @@ class SUAAAuth {
               key: 'simple_user_api_authentication_access_token');
           await storage.delete(key: 'simple_user_api_authentication_user_id');
 
-          Get.offNamed("/loginPage");
+          Get.off(LoginPage(), transition: Transition.noTransition);
 
           if (loadWithMessage == true) {
             SUAABasics.showSimpleMessage('Successfully logged out',
@@ -467,7 +468,7 @@ class SUAAAuth {
         }
       });
     } else {
-      Get.offNamed("/loginPage");
+      Get.off(LoginPage(), transition: Transition.noTransition);
     }
   }
 }
